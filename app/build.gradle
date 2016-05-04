@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.example.vito.mp3player"
+        applicationId "com.example.vito.MyTubes"
         minSdkVersion 22
         targetSdkVersion 23
         versionCode 1

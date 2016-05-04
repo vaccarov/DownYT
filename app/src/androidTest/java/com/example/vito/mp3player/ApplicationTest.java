@@ -1,4 +1,4 @@
-package com.example.vito.mp3player;
+package com.example.vito.MyTubes;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
