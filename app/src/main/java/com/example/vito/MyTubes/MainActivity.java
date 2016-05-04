@@ -23,9 +23,9 @@ import android.content.ServiceConnection;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.Toast;
 
 public class MainActivity  extends AppCompatActivity implements MediaPlayerControl{
-//    Log.d(TAG, "YO");
 
     private static final String TAG = "test main"; // pour identifier les logs
     private ArrayList<Song> songList;
@@ -44,19 +44,15 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
         gererPerm();
     }
 
-    //connect to the service
     private ServiceConnection musicConnection = new ServiceConnection(){
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicSrv.setList(songList);
             musicBound = true;
+            controller.show(); //show the controls
         }
-
         @Override
         public void onServiceDisconnected(ComponentName name) {
             musicBound = false;
@@ -84,7 +80,6 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
         });
         SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
-        Log.d(TAG, "fin");
         setController();
     }
 
@@ -113,15 +108,13 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
         }
     }
     public void songPicked(View view){
-        Log.d(TAG, "songPicked");
-        Log.d(TAG, view.getTag().toString());
+        Toast.makeText(getApplicationContext(), "songPicked"+view.getTag(),Toast.LENGTH_SHORT).show();
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
     }
 
     @Override
@@ -131,7 +124,6 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        //menu item selected
         switch (item.getItemId()) {
             case R.id.action_shuffle:
                 musicSrv.setShuffle();
@@ -146,21 +138,24 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
     }
 
     private void setController(){
-        controller = new MusicController(this); //set the controller up
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrev();
-            }
-        });
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.song_list));
-        controller.setEnabled(true);
+        if(controller == null) {
+            controller = new MusicController(this);
+            controller.setPrevNextListeners(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playNext();
+                }
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playPrev();
+                }
+            });
+            controller.setMediaPlayer(this);
+            controller.setAnchorView(findViewById(R.id.song_list));
+            controller.setEnabled(true);
+        } else
+            controller.invalidate();
     }
 
     @Override
@@ -170,38 +165,9 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
         super.onDestroy();
     }
 
-    private void gererPerm() {
-        // Here, this is the current activity
-        Log.d(TAG, "check la permission");
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "demande");
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-        } else {
-            afficherListe();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult");
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
-                Log.d(TAG, "case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE");
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "authorisation");
-                    afficherListe();
-                } else {
-                    Log.d(TAG, "permission denied");
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
-                }
-                return;
-            }
-        }
-    }
-
     @Override
     public void pause() {
+        Toast.makeText(getApplicationContext(), "pause",Toast.LENGTH_SHORT).show();
         playbackPaused=true;
         musicSrv.pausePlayer();
     }
@@ -213,6 +179,7 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
 
     @Override
     public void start() {
+        Toast.makeText(getApplicationContext(), "start",Toast.LENGTH_SHORT).show();
         musicSrv.go();
     }
 
@@ -262,41 +229,61 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
         return 0;
     }
     private void playNext(){
+        Toast.makeText(getApplicationContext(), "next",Toast.LENGTH_SHORT).show();
         musicSrv.playNext();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
     }
 
     private void playPrev(){
+        Toast.makeText(getApplicationContext(), "prev",Toast.LENGTH_SHORT).show();
         musicSrv.playPrev();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
     }
-
     @Override
-    protected void onPause(){
+    protected void onPause() {
+        Toast.makeText(getApplicationContext(), "pause",Toast.LENGTH_SHORT).show();
         super.onPause();
-        paused=true;
+        paused = true;
     }
-
     @Override
     protected void onResume(){
+        Toast.makeText(getApplicationContext(), "resume",Toast.LENGTH_SHORT).show();
         super.onResume();
         if(paused){
             setController();
             paused=false;
         }
     }
-
     @Override
     protected void onStop() {
         controller.hide();
         super.onStop();
+    }
+
+    // demande de droits pour lire la carte sd
+    private void gererPerm() {
+        Toast.makeText(getApplicationContext(), "demande de droits",Toast.LENGTH_SHORT).show();
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+        } else
+            afficherListe();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                    afficherListe();
+                else
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                return;
+            }
+        }
     }
 }

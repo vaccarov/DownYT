@@ -42,7 +42,6 @@ public class MusicService extends Service implements
     }
 
     public void initMusicPlayer(){
-        //set player properties
         player.setWakeMode(getApplicationContext(), PowerManager.PARTIAL_WAKE_LOCK);
         player.setAudioStreamType(AudioManager.STREAM_MUSIC);
         player.setOnPreparedListener(this);
@@ -51,20 +50,14 @@ public class MusicService extends Service implements
     }
 
     public void playSong(){
-        //play a song
         player.reset();
         Song playSong = songs.get(songPosn);    //get song
         songTitle=playSong.getTitle();
         long currSong = playSong.getID();       //get id
-        // set uri
         Uri trackUri = ContentUris.withAppendedId(android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,currSong);
-        Log.d(TAG, "chanson");
-        Log.d(TAG, trackUri.toString());
         try{
-            Log.d(TAG, "joue la chanson");
             player.setDataSource(getApplicationContext(), trackUri);
-        }
-        catch(Exception e){
+        } catch(Exception e){
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
@@ -108,7 +101,6 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        //start playback
         mp.start();
         Intent notIntent = new Intent(this, MainActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -155,6 +147,7 @@ public class MusicService extends Service implements
     public void go(){
         player.start();
     }
+
     public void playPrev(){
         songPosn--;
         if(songPosn<0) songPosn=songs.size()-1;
