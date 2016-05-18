@@ -1,6 +1,7 @@
 
 package com.example.vito.MyTubes;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -48,7 +49,9 @@ public class SongAdapter extends BaseAdapter {
         Song currSong = songs.get(position);
         //get title and artist strings
         songView.setText(currSong.getTitle());
+        songView.setTextColor(Color.WHITE);
         artistView.setText(currSong.getArtist());
+        artistView.setTextColor(Color.WHITE);
         //set position as tag
         songLay.setTag(position);
         return songLay;

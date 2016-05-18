@@ -14,6 +14,7 @@ import android.content.ContentResolver;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.os.IBinder;
 import android.content.ComponentName;
@@ -23,6 +24,7 @@ import android.content.ServiceConnection;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.MediaController.MediaPlayerControl;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity  extends AppCompatActivity implements MediaPlayerControl{
@@ -132,6 +134,10 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
                 stopService(playIntent);
                 musicSrv=null;
                 System.exit(0);
+                break;
+            case R.id.action_download:
+                Intent versDownloadActivity = new Intent(this, DownloadActivity.class);
+                startActivity(versDownloadActivity);
                 break;
         }
         return super.onOptionsItemSelected(item);
