@@ -49,9 +49,9 @@ public class SongAdapter extends BaseAdapter {
         Song currSong = songs.get(position);
         //get title and artist strings
         songView.setText(currSong.getTitle());
-        songView.setTextColor(Color.WHITE);
+        //songView.setTextColor(Color.WHITE);
         artistView.setText(currSong.getArtist());
-        artistView.setTextColor(Color.WHITE);
+        //artistView.setTextColor(Color.WHITE);
         //set position as tag
         songLay.setTag(position);
         return songLay;

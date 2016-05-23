@@ -67,33 +67,6 @@ public class DownloadActivity extends AppCompatActivity implements View.OnClickL
             String res = "";
             res = gs.requete(qs[0]);
 
-            /*if (qs[0] != null)
-            {
-                Log.i(gs.CAT,"requete2");
-                String API_URL = "http://www.youtubeinmp3.com/fetch/?";
-                String API_FORMAT ="format=JSON";
-                String API_VIDEO = "video=";
-
-                String urlData = API_URL + API_FORMAT + "&" + API_VIDEO;
-                Log.i(gs.CAT, "urlData: "+ urlData);
-                try {
-                    URL url = new URL(urlData + qs[0]);
-                    Log.i(gs.CAT, "url utilisée : " + url.toString());
-                    HttpURLConnection urlConnection = null;
-                    urlConnection = (HttpURLConnection) url.openConnection();
-                    InputStream in = null;
-                    in = new BufferedInputStream(urlConnection.getInputStream());
-                    String txtReponse = gs.convertStreamToString(in);
-                    urlConnection.disconnect();
-                    res = txtReponse;
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }*/
-
-
             Log.i(gs.CAT, "res: " + res);
 
 
