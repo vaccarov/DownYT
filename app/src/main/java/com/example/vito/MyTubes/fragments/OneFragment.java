@@ -6,6 +6,7 @@ package com.example.vito.MyTubes.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,5 +32,7 @@ public class OneFragment extends Fragment{
         return inflater.inflate(R.layout.fragment_one, container, false);
     }
 
-
+    public FragmentActivity getFragment(){
+        return getActivity();
+    }
 }

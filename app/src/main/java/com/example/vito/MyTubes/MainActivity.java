@@ -1,7 +1,16 @@
 package com.example.vito.MyTubes;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -10,32 +19,21 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import android.net.Uri;
-import android.content.ContentResolver;
-import android.database.Cursor;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.os.IBinder;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.MediaController.MediaPlayerControl;
 import android.widget.Toast;
 
 import com.example.vito.MyTubes.fragments.OneFragment;
 import com.example.vito.MyTubes.fragments.TwoFragment;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class MainActivity  extends AppCompatActivity implements MediaPlayerControl{
 
@@ -51,6 +49,8 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private Fragment ListeFragment;
+    private ViewPagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +72,9 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "ONE");
+        adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ListeFragment = new OneFragment();
+        adapter.addFragment(ListeFragment, "ONE");
         adapter.addFragment(new TwoFragment(), "TWO");
         //adapter.addFragment(new ThreeFragment(), "THREE");
         viewPager.setAdapter(adapter);
@@ -142,7 +143,7 @@ public class MainActivity  extends AppCompatActivity implements MediaPlayerContr
                 return a.getTitle().compareTo(b.getTitle());
             }
         });
-        SongAdapter songAdt = new SongAdapter(this, songList);
+        SongAdapter songAdt = new SongAdapter(adapter.getItem(0).getActivity(), songList);
         songView.setAdapter(songAdt);
         setController();
     }

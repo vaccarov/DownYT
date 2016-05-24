@@ -31,19 +31,19 @@ android:layout_height="match_parent">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
-
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical"
-        tools:context="com.example.vito.MyTubes.MainActivity">
-
+        tools:context="com.example.vito.MyTubes.fragments.OneFragment"
+        android:weightSum="1">
         <ListView
-            android:id="@+id/song_list"
+            android:id="@+id/list2"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textColor="#FF0000">
+            android:textColor="#FF0000"
+            android:layout_weight="1.20">
         </ListView>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
