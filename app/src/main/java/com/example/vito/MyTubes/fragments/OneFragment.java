@@ -5,34 +5,52 @@ package com.example.vito.MyTubes.fragments;
  */
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
+import com.example.vito.MyTubes.GlobalState;
 import com.example.vito.MyTubes.R;
+import com.example.vito.MyTubes.SongAdapter;
 
+public class OneFragment extends Fragment {
 
-public class OneFragment extends Fragment{
+    Bundle args;
+    GlobalState gs;
+    private ListView songView;
 
-    public OneFragment() {
-        // Required empty public constructor
+    public OneFragment() {} // Required empty public constructor
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        gs.onStartFromFragment();
+        Log.i("debugfragmentOne","onActivityCreated");
+        songView = (ListView)getView().findViewById(R.id.song_list);
+        SongAdapter songAdt = new SongAdapter(getActivity(), gs.songList);
+        songView.setAdapter(songAdt);
+        songView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                Log.i("log frag songpicked","pos : " + position + " id = "  + id);
+                gs.songPickedFromFragment(position);
+            }
+        });
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gs = (GlobalState) getActivity().getApplication();
+        args = getArguments();
+        Log.i("debugfragmentOne","oncreate");
     }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_one, container, false);
     }
 
-    public FragmentActivity getFragment(){
-        return getActivity();
-    }
 }
