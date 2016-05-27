@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context="com.example.vito.MyTubes.fragments.TwoFragment">
+android:paddingLeft="@dimen/activity_horizontal_margin"
+android:paddingRight="@dimen/activity_horizontal_margin"
+android:paddingTop="@dimen/activity_vertical_margin"
+android:paddingBottom="@dimen/activity_vertical_margin"
+tools:context="com.example.vito.MyTubes.fragments.TwoFragment"
+android:orientation="vertical">
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="two"
-    android:textSize="40dp"
-    android:textStyle="bold"
-    android:layout_centerInParent="true"/>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/download_link"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Past the YouTube link"
+            android:inputType="text"
+            android:singleLine="true"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <com.dmitrymalkovich.android.ProgressFloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:id="@+id/view"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_gravity="center_horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/myFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_backup_black_24dp" />
+
+        <ProgressBar
+            android:id="@+id/dlProgressBar"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </com.dmitrymalkovich.android.ProgressFloatingActionButton>
+</LinearLayout>
