@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.vito.MyTubes.fragments.OneFragment;
+import com.example.vito.MyTubes.fragments.ThreeFragment;
 import com.example.vito.MyTubes.fragments.TwoFragment;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class MainActivity  extends AppCompatActivity {
     private void setUpToolbars() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -57,7 +58,7 @@ public class MainActivity  extends AppCompatActivity {
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OneFragment(), "List");
         adapter.addFragment(new TwoFragment(), "Download");
-        //adapter.addFragment(new ThreeFragment(), "THREE");
+        adapter.addFragment(new ThreeFragment(), "Lyrics");
         viewPager.setAdapter(adapter);
     }
 
@@ -99,10 +100,6 @@ public class MainActivity  extends AppCompatActivity {
                 stopService(gs.playIntent);
                 gs.musicSrv=null;
                 System.exit(0);
-                break;
-            case R.id.action_download:
-                Intent versDownloadActivity = new Intent(this, DownloadActivity.class);
-                startActivity(versDownloadActivity);
                 break;
         }
         return super.onOptionsItemSelected(item);

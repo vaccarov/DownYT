@@ -14,9 +14,4 @@
         android:showAsAction="always"
         android:title="End"/>
 
-    <item
-        android:id="@+id/action_download"
-        android:orderInCategory="3"
-        android:showAsAction="always"
-        android:title="Download from YouTube"/>
 </menu>

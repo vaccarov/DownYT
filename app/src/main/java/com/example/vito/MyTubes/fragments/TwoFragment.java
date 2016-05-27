@@ -39,7 +39,7 @@ public class TwoFragment extends Fragment{
     private DownloadManager dm;
     private long enqueue;
     ProgressBar dlProgressBar;
-
+    TextView errorMsg;
 
     public EditText edt;
 
@@ -58,30 +58,28 @@ public class TwoFragment extends Fragment{
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_two, container, false);
 
-/*
-        edt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //what ever you need to do goes here
-                Log.i(gs.CAT, "click");
-            }
-        });
-*/
         gs = (GlobalState) getActivity().getApplication();
         myFab = (FloatingActionButton)  view.findViewById(R.id.myFAB);
         dlLink = (EditText) view.findViewById(R.id.download_link);
         dlProgressBar = (ProgressBar) view.findViewById(R.id.dlProgressBar);
+        errorMsg = (TextView) view.findViewById(R.id.errorMsg);
 
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                errorMsg.setText("");
                 dlProgressBar.setVisibility(View.VISIBLE);
                 String link = dlLink.getText().toString();
                 Log.i(gs.CAT, link);
 
-                Object[] arg = new String[]{link};
+                if(link.length() == 0){
+                    errorMsg.setText("Please, fill the field.");
+                }
+                else{
+                    Object[] arg = new String[]{link};
 
-                AsyncTask at = new JSONAsyncTask(); //instanciation
-                at.execute(arg); //declenche la requete
+                    AsyncTask at = new JSONAsyncTask(); //instanciation
+                    at.execute(arg); //declenche la requete
+                }
             }
         });
 
@@ -117,25 +115,20 @@ public class TwoFragment extends Fragment{
 
         @Override
         protected void onPreExecute() {
-            Log.i(gs.CAT, "onPreExecute");
         }
 
         protected JSONObject doInBackground(String... qs) {
             // Do some validation here
 
-            Log.i(gs.CAT, "doInBackground");
-            Log.i(gs.CAT, "qs: "+qs[0]);
-
             String res = "";
             res = gs.requete(qs[0]);
 
-            Log.i(gs.CAT, "res: " + res);
-
-
             try{
-                Log.i(gs.CAT, "res: " + res);
-                JSONObject oRes = new JSONObject(res);
-                return oRes;
+                if(res.length() >0){
+                    JSONObject oRes = new JSONObject(res);
+                    return oRes;
+                }
+                return null;
             }
             catch(JSONException e){
                 e.printStackTrace();
@@ -144,31 +137,27 @@ public class TwoFragment extends Fragment{
         }
 
         protected void onPostExecute(JSONObject response) {
-
             Log.i(gs.CAT, "onPostExecute");
             String result = "";
 
             if(response == null) {
-                result = "THERE WAS AN ERROR";
+                errorMsg.setText("No video was found.");
             }
+            else {
+                try {
+                    Log.i("INFO", response.getString("link"));
+                    String title = response.getString("title");
+                    String link = response.getString("link");
+                    result = title + " " + link;
+                    Log.i(gs.CAT, result);
 
-            try{
-                Log.i("INFO", response.getString("link"));
-                String title = response.getString("title");
-                String link = response.getString("link");
-                result = title + " " + link;
-                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(link));
-                //startActivity(browserIntent);
-
-                dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
-                enqueue = dm.enqueue(request);
+                    dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+                    enqueue = dm.enqueue(request);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-            catch(JSONException e){
-                e.printStackTrace();
-            }
-
-            Log.i(gs.CAT,"result: "+result);
         }
     }
 
