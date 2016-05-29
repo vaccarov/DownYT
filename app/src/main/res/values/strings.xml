@@ -1,9 +1,4 @@
 <resources>
     <string name="app_name">MyTubes</string>
-    <string name="lyricsDialogMessage">Do you want to load the lyrics for the current playing track?</string>
-    <string name="lyricsDialogTitle">Load lyrics</string>
-    <string name="lyricsDialogLoad">Load</string>
-    <string name="lyricsDialogCancel">Cancel</string>
-    <string name="song_artist">Song artist</string>
-    <string name="song_title">Song title</string>
+    <string name="dlacti">Download</string>
 </resources>

@@ -21,39 +21,29 @@ public class SongAdapter extends BaseAdapter {
         songs=theSongs;
         songInf=LayoutInflater.from(c);
     }
-
     @Override
     public int getCount() {
         return songs.size();
     }
-
     @Override
     public Object getItem(int position) {
         return null;
     }
-
     @Override
     public long getItemId(int position) {
         return 0;
     }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
-        LinearLayout songLay = (LinearLayout)songInf.inflate
-                (R.layout.song, parent, false);
+        LinearLayout songLay = (LinearLayout)songInf.inflate(R.layout.song, parent, false);
         //get title and artist views
         TextView songView = (TextView)songLay.findViewById(R.id.song_title);
         TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
-        //get song using position
-        Song currSong = songs.get(position);
-        //get title and artist strings
-        songView.setText(currSong.getTitle());
-        //songView.setTextColor(Color.WHITE);
+        Song currSong = songs.get(position); //get song using position
+        songView.setText(currSong.getTitle()); //get title and artist strings
         artistView.setText(currSong.getArtist());
-        //artistView.setTextColor(Color.WHITE);
-        //set position as tag
-        songLay.setTag(position);
+        songLay.setTag(position); //set position as tag
         return songLay;
     }
 }
