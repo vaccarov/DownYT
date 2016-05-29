@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.MediaController;
+import android.widget.MediaController.MediaPlayerControl;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
@@ -30,7 +31,7 @@ import java.util.Comparator;
 /**
  * Created by melissabeuze on 11/05/16.
  */
-public class GlobalState extends Application implements MediaController.MediaPlayerControl {
+public class GlobalState extends Application implements MediaPlayerControl{
 
     public ArrayList<Song> songList;
     public static String CAT = "IME4";
@@ -38,10 +39,9 @@ public class GlobalState extends Application implements MediaController.MediaPla
     public String test_gs;
     public MusicService musicSrv;
     public boolean musicBound=false;
-    public MediaController controller;
     public Intent playIntent;
     public boolean playbackPaused=false;
-
+    private MediaController controller;
 
 
     @Override
@@ -55,6 +55,31 @@ public class GlobalState extends Application implements MediaController.MediaPla
             }
         });
         setController();
+    }
+    private void setController(){
+        controller = new MediaController(this);
+        controller.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.song_list));
+        controller.setEnabled(true);
+    }
+    private void playNext(){
+        musicSrv.playNext();
+        controller.show(0);
+    }
+    private void playPrev(){
+        musicSrv.playPrev();
+        controller.show(0);
     }
     private ServiceConnection musicConnection = new ServiceConnection(){
         @Override
@@ -118,43 +143,11 @@ public class GlobalState extends Application implements MediaController.MediaPla
         controller.show(0);
     }
 
-    private void setController(){
-        controller = new MediaController(this);
-        //set previous and next button listeners
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrev();
-            }
-        });
-        //set and show
-        controller.setMediaPlayer(this);
-//        controller.setAnchorView(controller.findViewById(R.id.song_list_f1));
-        controller.setAnchorView(controller.findViewById(R.id.idplayer));
-        controller.setEnabled(true);
-    }
-    private void playNext(){
-        Toast.makeText(getApplicationContext(), "next",Toast.LENGTH_SHORT).show();
-        musicSrv.playNext();
-        if(playbackPaused){
-            setController();
-            playbackPaused=false;
-        }
-        controller.show(0);
-    }
-    private void playPrev(){
-        Toast.makeText(getApplicationContext(), "prev",Toast.LENGTH_SHORT).show();
-        musicSrv.playPrev();
-        if(playbackPaused){
-            setController();
-            playbackPaused=false;
-        }
-        controller.show(0);
+
+    protected void onDestroy() {
+        stopService(playIntent);
+        musicSrv=null;
+        musicSrv.onDestroy();
     }
 
     //fonction qui cree des toast
@@ -209,19 +202,11 @@ public class GlobalState extends Application implements MediaController.MediaPla
                 e.printStackTrace();
             }
         }
-
         return "";
-    }
-
-    protected void onDestroy() {
-        stopService(playIntent);
-        musicSrv=null;
-        musicSrv.onDestroy();
     }
 
     @Override
     public void pause() {
-        playbackPaused=true;
         musicSrv.pausePlayer();
     }
 
@@ -231,8 +216,9 @@ public class GlobalState extends Application implements MediaController.MediaPla
     }
 
     @Override
-    public void start() {musicSrv.go();}
-
+    public void start() {
+        musicSrv.go();
+    }
     @Override
     public int getDuration() {
         if(musicSrv!=null && musicBound && musicSrv.isPng())
