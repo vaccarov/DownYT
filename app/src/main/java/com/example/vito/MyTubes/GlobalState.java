@@ -127,11 +127,8 @@ public class GlobalState extends Application {
         if (qs != null)
         {
             Log.i(CAT,"requete2");
-            String API_URL = "http://www.youtubeinmp3.com/fetch/?";
-            String API_FORMAT ="format=JSON";
-            String API_VIDEO = "video=";
+            String urlData = qs;
 
-            String urlData = API_URL + API_FORMAT + "&" + API_VIDEO + qs;
             Log.i(CAT, "urlData: "+ urlData);
             try {
                 URL url = new URL(urlData);

@@ -33,7 +33,7 @@ public class MusicService extends Service implements
     //binder
     private final IBinder musicBind = new MusicBinder();
     //title of current song
-    private String songTitle="";
+    public String songTitle="";
     //notification id
     private static final int NOTIFY_ID=1;
     //shuffle flag and random
