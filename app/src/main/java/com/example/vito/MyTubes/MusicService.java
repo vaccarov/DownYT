@@ -28,7 +28,7 @@ public class MusicService extends Service implements
     private ArrayList<Song> songs;  //song list
     private int songPosn;           //current position
     private final IBinder musicBind = new MusicBinder();
-    private String songTitle="";
+    public String songTitle="";
     private static final int NOTIFY_ID=1;
     private boolean shuffle=false;
     private Random rand;

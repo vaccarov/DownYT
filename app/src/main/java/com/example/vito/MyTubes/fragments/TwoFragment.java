@@ -9,15 +9,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,20 +63,20 @@ public class TwoFragment extends Fragment{
 
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                errorMsg.setText("");
-                dlProgressBar.setVisibility(View.VISIBLE);
-                String link = dlLink.getText().toString();
-                Log.i(gs.CAT, link);
+            errorMsg.setText("");
+            dlProgressBar.setVisibility(View.VISIBLE);
+            String link = dlLink.getText().toString();
+            Log.i(gs.CAT, link);
 
-                if(link.length() == 0){
-                    errorMsg.setText("Please, fill the field.");
-                }
-                else{
-                    Object[] arg = new String[]{link};
+            if(link.length() == 0){
+                errorMsg.setText("Please, fill the field.");
+            }
+            else{
+                Object[] arg = new String[]{link};
 
-                    AsyncTask at = new JSONAsyncTask(); //instanciation
-                    at.execute(arg); //declenche la requete
-                }
+                AsyncTask at = new JSONAsyncTask(); //instanciation
+                at.execute(arg); //declenche la requete
+            }
             }
         });
 
@@ -88,7 +85,6 @@ public class TwoFragment extends Fragment{
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                     DownloadManager.Query query = new DownloadManager.Query();
                     query.setFilterById(enqueue);
                     Cursor c = dm.query(query);
@@ -119,9 +115,11 @@ public class TwoFragment extends Fragment{
 
         protected JSONObject doInBackground(String... qs) {
             // Do some validation here
-
+            String API_URL = "http://www.youtubeinmp3.com/fetch/?";
+            String API_FORMAT ="format=JSON";
+            String API_VIDEO = "video=";
             String res = "";
-            res = gs.requete(qs[0]);
+            res = gs.requete(API_URL + API_FORMAT + "&" + API_VIDEO + qs[0]);
 
             try{
                 if(res.length() >0){
