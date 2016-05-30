@@ -28,7 +28,7 @@ import org.json.JSONObject;
 /**
  * Created by melissabeuze on 22/05/16.
  */
-public class TwoFragment extends Fragment{
+public class DownloadFragment extends Fragment{
     View view;
     GlobalState gs;
     FloatingActionButton myFab;
@@ -40,7 +40,7 @@ public class TwoFragment extends Fragment{
 
     public EditText edt;
 
-    public TwoFragment() {
+    public DownloadFragment() {
         // Required empty public constructor
     }
 
@@ -53,7 +53,7 @@ public class TwoFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_two, container, false);
+        view = inflater.inflate(R.layout.fragment_download, container, false);
 
         gs = (GlobalState) getActivity().getApplication();
         myFab = (FloatingActionButton)  view.findViewById(R.id.myFAB);
@@ -69,7 +69,7 @@ public class TwoFragment extends Fragment{
             Log.i(gs.CAT, link);
 
             if(link.length() == 0){
-                errorMsg.setText("Please, fkill the field.");
+                errorMsg.setText("Please, fill the field.");
             }
             else{
                 Object[] arg = new String[]{link};

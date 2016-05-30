@@ -26,7 +26,7 @@ import java.net.URLEncoder;
 /**
  * Created by melissabeuze on 22/05/16.
  */
-public class ThreeFragment extends Fragment{
+public class LyricsFragment extends Fragment{
     View view;
     GlobalState gs;
     Button loadLyricsBtn;
@@ -40,7 +40,7 @@ public class ThreeFragment extends Fragment{
     String currentSongTitle ="";
     String currentLyricsTrack = "";
 
-    public ThreeFragment() {
+    public LyricsFragment() {
         // Required empty public constructor
     }
 
@@ -53,7 +53,7 @@ public class ThreeFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_three, container, false);
+        view = inflater.inflate(R.layout.fragment_lyrics, container, false);
         gs = (GlobalState) getActivity().getApplication();
         loadLyricsBtn = (Button) view.findViewById(R.id.loadLyrics);
         lyricsErrorMsg = (TextView) view.findViewById(R.id.lyricsErrorMsg);
@@ -66,7 +66,7 @@ public class ThreeFragment extends Fragment{
             public void onClick(View v) {
                 Log.i(gs.CAT,"here");
                 if(gs.musicSrv.songTitle.length() == 0){
-                    lyricsErrorMsg.setText("Pklease, fill the field.");
+                    lyricsErrorMsg.setText("Please, fill the field.");
                 }
                 else{
                     currentSongTitle = gs.musicSrv.songTitle;

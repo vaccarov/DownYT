@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false"
+    android:clickable="false"
+    android:id="@+id/idplayer"
+    tools:context=".fragments.DownloadFragment"
+    >
+
+    <ListView
+        android:id="@+id/song_list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:textColor="#FF0000"
+        android:layout_weight="1.20">
+    </ListView>
+
+</RelativeLayout>
