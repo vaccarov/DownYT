@@ -66,7 +66,7 @@ public class ThreeFragment extends Fragment{
             public void onClick(View v) {
                 Log.i(gs.CAT,"here");
                 if(gs.musicSrv.songTitle.length() == 0){
-                    lyricsErrorMsg.setText("Please, fill the field.");
+                    lyricsErrorMsg.setText("Pklease, fill the field.");
                 }
                 else{
                     currentSongTitle = gs.musicSrv.songTitle;

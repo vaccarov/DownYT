@@ -69,7 +69,7 @@ public class TwoFragment extends Fragment{
             Log.i(gs.CAT, link);
 
             if(link.length() == 0){
-                errorMsg.setText("Please, fill the field.");
+                errorMsg.setText("Please, fkill the field.");
             }
             else{
                 Object[] arg = new String[]{link};

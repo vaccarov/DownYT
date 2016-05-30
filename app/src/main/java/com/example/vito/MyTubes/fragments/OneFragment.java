@@ -30,7 +30,7 @@ public class OneFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         gs.onStartFromFragment();
-        Log.i("debugfragmentOne","onActivityCreated");
+        Log.i("debugfragmentOne ","onActivityCreated");
         songView = (ListView)getView().findViewById(R.id.song_list);
         SongAdapter songAdt = new SongAdapter(getActivity(), gs.songList);
         songView.setAdapter(songAdt);
