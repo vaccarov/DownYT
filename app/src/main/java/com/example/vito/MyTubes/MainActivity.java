@@ -62,7 +62,17 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         gs = (GlobalState) getApplication();
         allowPermission();
         setController();
-
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(gs.playIntent==null){
+            Log.i("onstart", "insta,cie playintent");
+            gs.playIntent = new Intent(this, MusicService.class);
+            bindService(gs.playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(gs.playIntent);
+        }
+        Log.i("onstart", "dedans");
         Intent in = getIntent();
         String receivedAction = in.getAction();
         if (receivedAction.equals(Intent.ACTION_SEND)) {
@@ -72,32 +82,30 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             String correctLink = "https://www.youtube.com/watch?v=" + idLink;
             Log.i("ok", correctLink);
             new tacheDeFond().execute(new String[]{correctLink});
+            this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
             Log.i("ok", "action main"); // lancement normal
         }
-
-        BroadcastReceiver receiver2 = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(enqueue);
-                    Cursor c = dm.query(query);
-                    if (c.moveToFirst()) {
-                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                            Log.i(gs.CAT, "successssss");
-//                            dlProgressBar.setVisibility(View.GONE);
-//                            dlLink.setText("");
-                        }
+    }
+    BroadcastReceiver receiver2 = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                DownloadManager.Query query = new DownloadManager.Query();
+                query.setFilterById(enqueue);
+                Cursor c = dm.query(query);
+                if (c.moveToFirst()) {
+                    int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                    if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                        Log.i(gs.CAT, "successssss");
                     }
                 }
             }
-        };
+        }
+    };
 
-        this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-    }
+
     private void setController(){
         controller = new MediaController(this);
         controller.setPrevNextListeners(new View.OnClickListener() {
@@ -236,17 +244,6 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             gs.musicBound = false;
         }
     };
-
-    //start and bind the service when the activity starts
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(gs.playIntent==null){
-            gs.playIntent = new Intent(this, MusicService.class);
-            bindService(gs.playIntent, musicConnection, Context.BIND_AUTO_CREATE);
-            startService(gs.playIntent);
-        }
-    }
 
     private void setUpToolbars() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
