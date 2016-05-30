@@ -1,11 +1,16 @@
 package com.example.vito.MyTubes;
 
 import android.Manifest;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,12 +26,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
 
 import com.example.vito.MyTubes.fragments.DownloadFragment;
 import com.example.vito.MyTubes.fragments.ListFragment;
 import com.example.vito.MyTubes.fragments.LyricsFragment;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +51,9 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
     private ViewPager viewPager;
     private ViewPagerAdapter adapter;
     private GlobalState gs;
+    private DownloadManager dm;
+    private long enqueue;
+    public MediaController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +61,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         setContentView(R.layout.activity_main);
         gs = (GlobalState) getApplication();
         allowPermission();
+        setController();
 
         Intent in = getIntent();
         String receivedAction = in.getAction();
@@ -58,14 +71,51 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             String idLink = shortLink.substring(shortLink.length() - 11);
             String correctLink = "https://www.youtube.com/watch?v=" + idLink;
             Log.i("ok", correctLink);
-//            DownloadFragment df = new DownloadFragment();
-//            df.telecharge(correctLink);
-            new tacheDeFond().execute();
+            new tacheDeFond().execute(new String[]{correctLink});
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
             Log.i("ok", "action main"); // lancement normal
         }
-    }
 
+        BroadcastReceiver receiver2 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(enqueue);
+                    Cursor c = dm.query(query);
+                    if (c.moveToFirst()) {
+                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                            Log.i(gs.CAT, "successssss");
+//                            dlProgressBar.setVisibility(View.GONE);
+//                            dlLink.setText("");
+                        }
+                    }
+                }
+            }
+        };
+
+        this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+    private void setController(){
+        controller = new MediaController(this);
+        controller.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gs.musicSrv.playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gs.musicSrv.playPrev();
+            }
+        });
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.song_list));
+        controller.setEnabled(true);
+        controller.show(0);
+    }
     @Override
     public void start() {
 
@@ -121,16 +171,51 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         return 0;
     }
 
-    private class tacheDeFond extends AsyncTask<Void,Void,Void>{
+    private class tacheDeFond extends AsyncTask<String, Void, JSONObject>{
         @Override
-        protected Void doInBackground(Void... params) {
-            Log.i("okokok","doitinbg");
-            gs.requete("https://www.youtube.com/watch?v=xXkjfnhqRGI");
-            return null;
+        protected JSONObject doInBackground(String... qs) {
+            Log.i(gs.CAT+"qs",qs[0]);
+            String API_URL = "http://www.youtubeinmp3.com/fetch/?format=JSON&video=";
+            String url = API_URL + qs[0];
+            Log.i(gs.CAT+" URL finale ",url);
+            String res = gs.requete(url);
+            Log.i(gs.CAT, "resultat :"+res);
+            try{
+                if(res.length() >0){
+                    JSONObject oRes = new JSONObject(res);
+                    return oRes;
+                }
+                return null;
+            }
+            catch(JSONException e){
+                e.printStackTrace();
+                return null;
+            }
         }
         @Override
-        protected void onPostExecute(Void aVoid) {
-            Log.i("okokok","postexec");
+        protected void onPostExecute(JSONObject response) {
+            Log.i(gs.CAT, "onPostExecute");
+            String result = "";
+
+            if(response == null) {
+                //Error
+                Log.i(gs.CAT, "ERROR onPostExecute");
+            }
+            else {
+                try {
+                    Log.i("INFO", response.getString("link"));
+                    String title = response.getString("title");
+                    String link = response.getString("link");
+                    result = title + " " + link;
+                    Log.i(gs.CAT, "result:"+result);
+
+                    dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+                    enqueue = dm.enqueue(request);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
     //connect to the service

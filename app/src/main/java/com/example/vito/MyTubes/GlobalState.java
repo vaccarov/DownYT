@@ -1,13 +1,21 @@
 package com.example.vito.MyTubes;
 
 import android.app.Application;
+import android.app.DownloadManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.IBinder;
 import android.util.Log;
 import android.widget.MediaController;
 import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -61,14 +69,14 @@ public class GlobalState extends Application {
 //        }
 //    };
 //
-    public void onStartFromFragment() {
-        if(playIntent==null){
-            playIntent = new Intent(this, MusicService.class);
-            //erreur
-            bindService(playIntent, MainActivity.musicConnection, Context.BIND_AUTO_CREATE);
-            startService(playIntent);
-        }
-    }
+//    public void onStartFromFragment() {
+//        if(playIntent==null){
+//            playIntent = new Intent(this, MusicService.class);
+//            //erreur
+//            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+//            startService(playIntent);
+//        }
+//    }
 
     public void getSongList() {
         songList = new ArrayList<Song>();
@@ -98,9 +106,8 @@ public class GlobalState extends Application {
 //        controller.show(0);
     }
 
-    public void alerter(String s){
-        Toast t = Toast.makeText(getApplicationContext(), s, Toast.LENGTH_LONG);
-        t.show();
+    public void alert(String s){
+        Toast.makeText(getApplicationContext(), s,Toast.LENGTH_SHORT).show();
         Log.i(CAT, s);
     }
 
@@ -149,4 +156,5 @@ public class GlobalState extends Application {
 
         return "";
     }
+
 }
