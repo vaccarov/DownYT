@@ -30,13 +30,12 @@ public class ListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         //gs.onStartFromFragment();
-        Log.i("debugfragmentOne ","onActivityCreated");
         songView = (ListView)getView().findViewById(R.id.song_list);
+        Log.i("songlist",gs.songList.toString());
         SongAdapter songAdt = new SongAdapter(getActivity(), gs.songList);
         songView.setAdapter(songAdt);
         songView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-                Log.i("log frag songpicked","pos : " + position + " id = "  + id);
                 gs.songPickedFromFragment(position);
             }
         });
@@ -46,11 +45,9 @@ public class ListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         gs = (GlobalState) getActivity().getApplication();
         args = getArguments();
-        Log.i("debugfragmentOne","oncreate");
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_list, container, false);
     }
-
 }

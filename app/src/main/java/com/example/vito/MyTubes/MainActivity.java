@@ -45,6 +45,7 @@ import java.util.List;
 public class MainActivity  extends AppCompatActivity implements MediaController.MediaPlayerControl {
 
     private static final String TAG = "debug mainActivity"; // pour identifier les logs
+    boolean allow = false;
     private static final int PERMISSIONS = 13; // pour identifier la permission
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -57,20 +58,54 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i("oncreate", "create");
+        /*Intent in = getIntent();
+        String receivedAction = in.getAction();
+        if (receivedAction.equals(Intent.ACTION_SEND)) {
+            Log.i("ok", "action send"); // lancement depuis intent
+        } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
+            Log.i("ok", "action main"); // lancement normal
+        }*/
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         allowPermission();
     }
     @Override
+    public void onRestart() {
+        super.onRestart();
+        Log.i("onrestart", "restart");
+        Intent in = getIntent();
+        String receivedAction = in.getAction();
+        Log.i("okokokok", in.getDataString()); // lancement depuis intent
+        if (receivedAction.equals(Intent.ACTION_SEND)) {
+            Log.i("ok", "action send"); // lancement depuis intent
+        } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
+            Log.i("ok", "action main"); // lancement normal
+            Log.i("okokokok",receivedAction);
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i("onresume", "resume");
+        /*Intent in = getIntent();
+        String receivedAction = in.getAction();
+        if (receivedAction.equals(Intent.ACTION_SEND)) {
+            Log.i("ok", "action send"); // lancement depuis intent
+        } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
+            Log.i("ok", "action main"); // lancement normal
+        }*/
+    }
+    @Override
     public void onStart() {
         super.onStart();
-        if(gs.playIntent==null){
+        /*if(gs.playIntent==null){
             Log.i("onstart", "insta,cie playintent");
             gs.playIntent = new Intent(this, MusicService.class);
             bindService(gs.playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(gs.playIntent);
         }
-        Log.i("onstart", "dedans");
+        Log.i("onstart", "start");
         Intent in = getIntent();
         String receivedAction = in.getAction();
         if (receivedAction.equals(Intent.ACTION_SEND)) {
@@ -83,7 +118,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
             Log.i("ok", "action main"); // lancement normal
-        }
+        }*/
     }
     BroadcastReceiver receiver2 = new BroadcastReceiver() {
         @Override
@@ -316,6 +351,12 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSIONS);
+        } else {
+            Log.i("","got both permissions already");
+            allow = true;
+            gs = (GlobalState) getApplication();
+            setUpToolbars();
+            setController();
         }
     }
     @Override
@@ -325,8 +366,9 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             Log.i("test", "req = permissions");
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.i("test", "read and write accepte");
-                setUpToolbars();
+                allow = true;
                 gs = (GlobalState) getApplication();
+                setUpToolbars();
                 setController();
             } else {
                 Toast.makeText(getApplicationContext(),"We need access for reading memory",Toast.LENGTH_SHORT).show();

@@ -96,7 +96,6 @@ public class GlobalState extends Application {
     }
 
     public void songPickedFromFragment(int number){
-        Log.i("log gs songpicked","num"+number);
         musicSrv.setSong(number);
         musicSrv.playSong();
         if(playbackPaused){
@@ -130,13 +129,9 @@ public class GlobalState extends Application {
     }
 
     public String requete(String qs) {
-        Log.i(CAT,"requete1");
         if (qs != null)
         {
-            Log.i(CAT,"requete2");
             String urlData = qs;
-
-            Log.i(CAT, "urlData: "+ urlData);
             try {
                 URL url = new URL(urlData);
                 Log.i(CAT, "url utilisée : " + url.toString());
@@ -153,8 +148,6 @@ public class GlobalState extends Application {
                 e.printStackTrace();
             }
         }
-
         return "";
     }
-
 }
