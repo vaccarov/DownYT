@@ -1,16 +1,21 @@
 package com.example.vito.MyTubes.fragments;
 
+import android.Manifest;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +23,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.vito.MyTubes.GlobalState;
 import com.example.vito.MyTubes.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
 
 /**
  * Created by melissabeuze on 22/05/16.
@@ -151,6 +159,19 @@ public class DownloadFragment extends Fragment{
 
                     dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+
+                   /* boolean hasPermission = (ContextCompat.checkSelfPermission(getActivity(),
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
+
+                    Log.i(gs.CAT, "permission: "+ Boolean.toString(hasPermission));
+                    if (!hasPermission) {
+                        Log.i(gs.CAT, "not has permission");
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                REQUEST_WRITE_STORAGE);
+                    }
+
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);*/
                     enqueue = dm.enqueue(request);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -158,5 +179,6 @@ public class DownloadFragment extends Fragment{
             }
         }
     }
+
 
 }

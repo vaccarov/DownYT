@@ -45,12 +45,12 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        getSongList();
-        Collections.sort(songList, new Comparator<Song>(){
+//        getSongList();
+/*        Collections.sort(songList, new Comparator<Song>(){
             public int compare(Song a, Song b){
                 return a.getTitle().compareTo(b.getTitle());
             }
-        });
+        });*/
 //        setController();
     }
 //    private ServiceConnection musicConnection = new ServiceConnection(){

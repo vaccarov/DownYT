@@ -45,7 +45,7 @@ import java.util.List;
 public class MainActivity  extends AppCompatActivity implements MediaController.MediaPlayerControl {
 
     private static final String TAG = "debug mainActivity"; // pour identifier les logs
-    private static final int PERMISSIONS_READ = 13; // pour identifier la permission
+    private static final int PERMISSIONS = 13; // pour identifier la permission
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
@@ -59,9 +59,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        gs = (GlobalState) getApplication();
         allowPermission();
-        setController();
     }
     @Override
     public void onStart() {
@@ -307,21 +305,31 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
     }
     // demande de droits pour lire la carte sd
     private void allowPermission() {
-        if (ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ);
-        } else setUpToolbars();
+        int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
+        int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        Log.i("test", "read: "+read+" write "+write);
+
+        if (read != PackageManager.PERMISSION_GRANTED && write != PackageManager.PERMISSION_GRANTED) {
+            Log.i("test", "request both perm");
+            ActivityCompat.requestPermissions(this, new String[]{
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            PERMISSIONS);
+        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_READ: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setUpToolbars();
-                } else {
-                    Toast.makeText(getApplicationContext(),"We need access for reading memory",Toast.LENGTH_SHORT).show();
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ);
-                }
-                return;
+        Log.i("test", "onRequestPermissionsResult");
+        if (requestCode == PERMISSIONS) {
+            Log.i("test", "req = permissions");
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.i("test", "read and write accepte");
+                setUpToolbars();
+                gs = (GlobalState) getApplication();
+                setController();
+            } else {
+                Toast.makeText(getApplicationContext(),"We need access for reading memory",Toast.LENGTH_SHORT).show();
             }
         }
     }
