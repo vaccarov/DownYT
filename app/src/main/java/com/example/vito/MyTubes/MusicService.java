@@ -16,12 +16,15 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
 
-/**
- * Created by Vito on 03/05/2016.
+/*
+ * This is demo code to accompany the Mobiletuts+ series:
+ * Android SDK: Creating a Music Player
+ *
+ * Sue Smith - February 2014
  */
+
 public class MusicService extends Service implements
-        MediaPlayer.OnPreparedListener,
-        MediaPlayer.OnErrorListener,
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
 
     //media player
@@ -71,7 +74,7 @@ public class MusicService extends Service implements
 
     //binder
     public class MusicBinder extends Binder {
-        public MusicService getService() {
+        MusicService getService() {
             return MusicService.this;
         }
     }
@@ -215,4 +218,5 @@ public class MusicService extends Service implements
         if(shuffle) shuffle=false;
         else shuffle=true;
     }
+
 }

@@ -1,21 +1,16 @@
 package com.example.vito.MyTubes.fragments;
 
-import android.Manifest;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,22 +18,19 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.vito.MyTubes.GlobalState;
+import com.example.vito.MyTubes.MainActivity;
 import com.example.vito.MyTubes.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
 
 /**
  * Created by melissabeuze on 22/05/16.
  */
 public class DownloadFragment extends Fragment{
     View view;
-    GlobalState gs;
+    MainActivity ma;
     FloatingActionButton myFab;
     EditText dlLink;
     private DownloadManager dm;
@@ -55,6 +47,7 @@ public class DownloadFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ma = ((MainActivity) getActivity());
     }
 
     @Override
@@ -62,8 +55,6 @@ public class DownloadFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_download, container, false);
-
-        gs = (GlobalState) getActivity().getApplication();
         myFab = (FloatingActionButton)  view.findViewById(R.id.myFAB);
         dlLink = (EditText) view.findViewById(R.id.download_link);
         dlProgressBar = (ProgressBar) view.findViewById(R.id.dlProgressBar);
@@ -74,7 +65,7 @@ public class DownloadFragment extends Fragment{
             errorMsg.setText("");
             dlProgressBar.setVisibility(View.VISIBLE);
             String link = dlLink.getText().toString();
-            Log.i(gs.CAT, link);
+            Log.i(ma.CAT, link);
 
             if(link.length() == 0){
                 errorMsg.setText("Please, fill the field.");
@@ -99,7 +90,7 @@ public class DownloadFragment extends Fragment{
                     if (c.moveToFirst()) {
                         int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
                         if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                            Log.i(gs.CAT, "success");
+                            Log.i(ma.CAT, "success");
                             dlProgressBar.setVisibility(View.GONE);
                             dlLink.setText("");
                         }
@@ -127,7 +118,7 @@ public class DownloadFragment extends Fragment{
             String API_FORMAT ="format=JSON";
             String API_VIDEO = "video=";
             String res = "";
-            res = gs.requete(API_URL + API_FORMAT + "&" + API_VIDEO + qs[0]);
+            res = ma.requete(API_URL + API_FORMAT + "&" + API_VIDEO + qs[0]);
 
             try{
                 if(res.length() >0){
@@ -143,7 +134,7 @@ public class DownloadFragment extends Fragment{
         }
 
         protected void onPostExecute(JSONObject response) {
-            Log.i(gs.CAT, "onPostExecute");
+            Log.i(ma.CAT, "onPostExecute");
             String result = "";
 
             if(response == null) {
@@ -155,7 +146,7 @@ public class DownloadFragment extends Fragment{
                     String title = response.getString("title");
                     String link = response.getString("link");
                     result = title + " " + link;
-                    Log.i(gs.CAT, result);
+                    Log.i(ma.CAT, result);
 
                     dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));

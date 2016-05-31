@@ -6,7 +6,7 @@
     android:focusable="false"
     android:clickable="false"
     android:id="@+id/idplayer"
-    tools:context=".fragments.DownloadFragment"
+    tools:context=".fragments.ListFragment"
     >
 
     <ListView

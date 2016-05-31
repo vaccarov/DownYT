@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.example.vito.MyTubes.GlobalState;
+import com.example.vito.MyTubes.MainActivity;
 import com.example.vito.MyTubes.R;
 
 import org.json.JSONException;
@@ -27,8 +27,9 @@ import java.net.URLEncoder;
  * Created by melissabeuze on 22/05/16.
  */
 public class LyricsFragment extends Fragment{
+
+    MainActivity ma;
     View view;
-    GlobalState gs;
     Button loadLyricsBtn;
     public EditText edt;
     TextView lyricsErrorMsg;
@@ -47,6 +48,7 @@ public class LyricsFragment extends Fragment{
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ma = ((MainActivity) getActivity());
     }
 
     @Override
@@ -54,7 +56,6 @@ public class LyricsFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_lyrics, container, false);
-        gs = (GlobalState) getActivity().getApplication();
         loadLyricsBtn = (Button) view.findViewById(R.id.loadLyrics);
         lyricsErrorMsg = (TextView) view.findViewById(R.id.lyricsErrorMsg);
         lyricsTitle = (TextView)  view.findViewById(R.id.lyricsTitle);
@@ -64,12 +65,12 @@ public class LyricsFragment extends Fragment{
 
         loadLyricsBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.i(gs.CAT,"here");
-                if(gs.musicSrv.songTitle.length() == 0){
+                Log.i(ma.CAT,"here");
+                if(ma.musicSrv.songTitle.length() == 0){
                     lyricsErrorMsg.setText("Please, fill the field.");
                 }
                 else{
-                    currentSongTitle = gs.musicSrv.songTitle;
+                    currentSongTitle = ma.musicSrv.songTitle;
                     int i = currentSongTitle.indexOf(' ');
                     String artist = currentSongTitle.substring(0, i); //should be the artist
                     String title = currentSongTitle.substring(i);
@@ -86,7 +87,7 @@ public class LyricsFragment extends Fragment{
                     currentLyricsTrack = currentSongTitle;
 
                     Object[] arg = new String[]{"&q_artist="+encodedUrlArtist+"&q_track="+encodedUrlTitle};
-                    Log.i(gs.CAT,"arg: "+arg);
+                    Log.i(ma.CAT,"arg: "+arg);
 
                     AsyncTask at = new JSONAsyncTask(); //instanciation
                     at.execute(arg); //declenche la requete
@@ -109,13 +110,13 @@ public class LyricsFragment extends Fragment{
             String API_URL = "http://api.musixmatch.com/ws/1.1/matcher.lyrics.get?apikey="+musixmatch_apikey+"&format=JSON";
             String final_api_url = API_URL+qs[0];
 
-            Log.i(gs.CAT,"final_api_url: "+final_api_url);
+            Log.i(ma.CAT,"final_api_url: "+final_api_url);
             String res = "";
-            res = gs.requete(final_api_url);
+            res = ma.requete(final_api_url);
 
             try{
                 if(res.length() >0){
-                    Log.i(gs.CAT,"res: "+res);
+                    Log.i(ma.CAT,"res: "+res);
                     JSONObject oRes = new JSONObject(res);
                     return oRes;
                 }
@@ -128,7 +129,7 @@ public class LyricsFragment extends Fragment{
         }
 
         protected void onPostExecute(JSONObject response) {
-            Log.i(gs.CAT, "onPostExecute");
+            Log.i(ma.CAT, "onPostExecute");
 
             if(response == null) {
                 lyricsErrorMsg.setText("An error has occured");
@@ -137,7 +138,7 @@ public class LyricsFragment extends Fragment{
                 try {
                     if(response.getJSONObject("message").getJSONObject("header").getInt("status_code") == 200){
                         String lyrics = response.getJSONObject("message").getJSONObject("body").getJSONObject("lyrics").getString("lyrics_body");
-                        Log.i(gs.CAT, "lyrics found: "+lyrics);
+                        Log.i(ma.CAT, "lyrics found: "+lyrics);
                         loadLyricsBtn.setVisibility(View.GONE);
                         lyricsErrorMsg.setVisibility(View.GONE);
                         lyricsTitle.setText(currentLyricsTrack);
@@ -172,7 +173,7 @@ public class LyricsFragment extends Fragment{
                                 currentLyricsTrack = dialogSong_artist.getText().toString() + " " +dialogSong_title.getText().toString();
                                 Object[] arg = new String[]{"&q_artist="+encodedUrlArtist+"&q_track="+encodedUrlTitle};
 
-                                Log.i(gs.CAT, "Arg after dialog: "+arg);
+                                Log.i(ma.CAT, "Arg after dialog: "+arg);
                                 AsyncTask at = new JSONAsyncTask(); //instanciation
                                 at.execute(arg); //declenche la requete
                             }
