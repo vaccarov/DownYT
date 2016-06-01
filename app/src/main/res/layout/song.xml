@@ -4,21 +4,24 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="5dp"
-    android:onClick="songPicked">
+    android:onClick="songPicked"
+    android:weightSum="1">
 
     <TextView
         android:id="@+id/song_title"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#7b39c7"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_height="48dp"
+        android:textColor="@color/pink"
+        android:textSize="16sp"
+        android:paddingTop="8dp"
+        android:paddingLeft="72dp"
+        android:paddingRight="16dp"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/song_artist"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textColor="#1eb8cc"
-        android:textSize="18sp" />
+        android:textSize="18sp" />-->
 
 </LinearLayout>

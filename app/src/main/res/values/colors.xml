@@ -12,13 +12,13 @@
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="colorPrimary">#125688</color>
-    <color name="colorPrimaryDark">#125688</color>
+    <color name="colorPrimary">#12CED3</color>
+    <color name="colorPrimaryDark">#10A6A5</color>
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
     <color name="colorAccent">#c8e8ff</color>
-    <color name="colorFab">#5C6BC0</color>
+    <color name="pink">#FF4081</color>
     <color name="red">#FF0000</color>
 
 </resources>

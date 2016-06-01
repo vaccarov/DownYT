@@ -36,10 +36,10 @@ public class SongAdapter extends BaseAdapter {
         LinearLayout songLay = (LinearLayout)songInf.inflate(R.layout.song, parent, false);
         //get title and artist views
         TextView songView = (TextView)songLay.findViewById(R.id.song_title);
-        TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
+        //TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
         Song currSong = ma.getSongs().get(position); //get song using position
         songView.setText(currSong.getTitle()); //get title and artist strings
-        artistView.setText(currSong.getArtist());
+        //artistView.setText(currSong.getArtist());
         songLay.setTag(position); //set position as tag
         return songLay;
     }

@@ -6,4 +6,5 @@
     <string name="lyricsDialogCancel">Cancel</string>
     <string name="song_artist">Song artist</string>
     <string name="song_title">Song title</string>
+    <string name="yt_link">Paste the YouTube link</string>
 </resources>

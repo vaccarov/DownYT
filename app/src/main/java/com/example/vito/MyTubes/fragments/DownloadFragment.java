@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -151,18 +152,7 @@ public class DownloadFragment extends Fragment{
                     dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
 
-                   /* boolean hasPermission = (ContextCompat.checkSelfPermission(getActivity(),
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
-
-                    Log.i(gs.CAT, "permission: "+ Boolean.toString(hasPermission));
-                    if (!hasPermission) {
-                        Log.i(gs.CAT, "not has permission");
-                        ActivityCompat.requestPermissions(getActivity(),
-                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                                REQUEST_WRITE_STORAGE);
-                    }
-
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);*/
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);
                     enqueue = dm.enqueue(request);
                 } catch (JSONException e) {
                     e.printStackTrace();

@@ -13,11 +13,13 @@
     android:id="@+id/errorMsg">
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:text="LOAD LYRICS"
         android:id="@+id/loadLyrics"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:background="@color/pink"
+        android:textColor="@color/white" />
 
     <TextView
         android:layout_width="wrap_content"
