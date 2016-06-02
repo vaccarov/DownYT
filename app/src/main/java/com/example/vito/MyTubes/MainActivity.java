@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -25,6 +26,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.MediaController;
 import android.widget.Toast;
@@ -51,7 +53,7 @@ import java.util.List;
 
 // Toast.makeText(getApplicationContext(),"texte",Toast.LENGTH_SHORT).show();
 // Log.i(TAG,"texte");
-public class MainActivity  extends AppCompatActivity implements MediaController.MediaPlayerControl {
+public class MainActivity extends AppCompatActivity implements MediaController.MediaPlayerControl{
 
     private static final int PERMISSIONS = 13; // pour identifier la permission
     private Toolbar toolbar;
@@ -60,7 +62,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
     private ViewPagerAdapter adapter;
     private DownloadManager dm;
     private long enqueue;
-    public MediaController controller;
+    MusicController controller;
     public ArrayList<Song> songList;
     public static String CAT = "CAT";
     public MusicService musicSrv;
@@ -73,18 +75,56 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         allowPermission();
-        setController();
     }
 
-    public void songPicked(View view){
-        Log.i(CAT, "songpicked"+view.getTag().toString());
-        musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
-        musicSrv.playSong();
+    //set the controller up
+    private void setController(){
+        Log.i("okokokokok","setcontro");
+        controller = new MusicController(this);
+        //set previous and next button listeners
+        controller.setPrevNextListeners(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playNext();
+            }
+        }, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playPrev();
+            }
+        });
+        //set and show
+        controller.setMediaPlayer(this);
+        controller.setAnchorView(findViewById(R.id.viewpager));
+        controller.setPadding(30, 0, 30, 150);
+        controller.setEnabled(true);
+    }
+
+    private void playNext(){
+        musicSrv.playNext();
         if(playbackPaused){
             setController();
             playbackPaused=false;
         }
-        controller.show(0);
+//        controller.show(0);
+    }
+
+    private void playPrev(){
+        musicSrv.playPrev();
+        if(playbackPaused){
+            setController();
+            playbackPaused=false;
+        }
+//        controller.show(0);
+    }
+
+    public void songPicked(View view){
+        controller.show();
+        musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
+        musicSrv.playSong();
+        if(playbackPaused){
+            playbackPaused=false;
+        }
     }
     @Override
     protected void onStart() {
@@ -93,8 +133,9 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             playIntent = new Intent(this, MusicService.class);
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
+            setController();
         }
-        /*Log.i("onstart", "start");
+        Log.i("onstart", "start");
         Intent in = getIntent();
         String receivedAction = in.getAction();
         if (receivedAction.equals(Intent.ACTION_SEND)) {
@@ -107,7 +148,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
             this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
             Log.i("ok", "action main"); // lancement normal
-        }*/
+        }
     }
     BroadcastReceiver receiver2 = new BroadcastReceiver() {
         @Override
@@ -127,25 +168,7 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         }
     };
 
-    private void setController(){
-        Log.i(CAT, "set controller");
-        controller = new MediaController(this);
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicSrv.playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                musicSrv.playPrev();
-            }
-        });
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.song_list));
-        controller.setEnabled(true);
-        controller.show(0);
-    }
+
     @Override
     public boolean canPause() {
         return true;
@@ -208,53 +231,12 @@ public class MainActivity  extends AppCompatActivity implements MediaController.
         musicSrv.go();
     }
 
-
-    private void playNext(){
-        musicSrv.playNext();
-        if(playbackPaused){
-            setController();
-            playbackPaused=false;
-        }
-        controller.show(0);
-    }
-
-    private void playPrev(){
-        musicSrv.playPrev();
-        if(playbackPaused){
-            setController();
-            playbackPaused=false;
-        }
-        controller.show(0);
-    }
-
     @Override
-    protected void onPause(){
-        super.onPause();
-        paused=true;
+    public boolean onTouchEvent(MotionEvent event) {
+        // Your logic here
+        Log.i(CAT,"touchhhhh");
+        return super.onTouchEvent(event);
     }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        if(paused){
-            setController();
-            paused=false;
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        controller.hide();
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService(playIntent);
-        musicSrv=null;
-        super.onDestroy();
-    }
-
     public ArrayList<Song> getSongs() {
         return songList;
     }

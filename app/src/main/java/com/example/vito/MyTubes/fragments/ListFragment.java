@@ -37,11 +37,6 @@ public class ListFragment extends Fragment {
         SongAdapter songAdt = new SongAdapter(ma);
         songView.setAdapter(songAdt);
         Log.i(ma.CAT,"songview cree");
-//        songView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-//                ma.songPickedFromFragment(position);
-//            }
-//        });
     }
         @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
