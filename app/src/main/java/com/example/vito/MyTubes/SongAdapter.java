@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -33,13 +34,13 @@ public class SongAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to song layout
-        LinearLayout songLay = (LinearLayout)songInf.inflate(R.layout.song, parent, false);
+        RelativeLayout songLay = (RelativeLayout)songInf.inflate(R.layout.song, parent, false);
         //get title and artist views
         TextView songView = (TextView)songLay.findViewById(R.id.song_title);
-        //TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
+        TextView artistView = (TextView)songLay.findViewById(R.id.song_artist);
         Song currSong = ma.getSongs().get(position); //get song using position
         songView.setText(currSong.getTitle()); //get title and artist strings
-        //artistView.setText(currSong.getArtist());
+        artistView.setText(currSong.getArtist());
         songLay.setTag(position); //set position as tag
         return songLay;
     }

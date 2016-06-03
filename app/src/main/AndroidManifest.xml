@@ -22,6 +22,7 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+        <activity android:name=".PrefActivity"></activity>
         <service android:name="com.example.vito.MyTubes.MusicService" />
     </application>
     <uses-permission android:name="android.permission.WAKE_LOCK" />

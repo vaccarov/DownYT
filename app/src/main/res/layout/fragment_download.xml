@@ -9,6 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.example.vito.MyTubes.fragments.DownloadFragment"
+    android:focusableInTouchMode="true"
     android:orientation="vertical">
 
     <android.support.design.widget.TextInputLayout
@@ -33,6 +34,18 @@
         android:id="@+id/errorMsg"
         android:textColor="@color/red"/>
 
+    <Button
+        android:id="@+id/pasteBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/btnsHighlights"
+        android:text="PASTE"
+        android:textAllCaps="true"
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" />
+
     <com.dmitrymalkovich.android.ProgressFloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -46,8 +59,8 @@
             android:id="@+id/myFAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_backup_black_24dp"
-            app:backgroundTint="@color/pink" />
+            android:src="@drawable/ic_backup_white_24dp"
+            app:backgroundTint="@color/btnsHighlights" />
 
         <ProgressBar
             android:id="@+id/dlProgressBar"

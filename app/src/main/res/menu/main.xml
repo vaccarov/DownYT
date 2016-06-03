@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_shuffle"
         android:orderInCategory="1"
         android:showAsAction="always"
         android:title="Shuffle"/>
+
+
+    <item
+        android:id="@+id/action_choose_theme"
+        android:icon="@drawable/end"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        android:title="Theme color"/>
 
     <item
         android:id="@+id/action_end"

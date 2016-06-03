@@ -1,27 +1,31 @@
 <resources>
 
     <style name="MyMaterialTheme" parent="MyMaterialTheme.Base">
-
     </style>
 
     <!-- Base application theme. -->
     <style name="MyMaterialTheme.Base" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-       <!-- <item name="windowNoTitle">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/blanc</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@color/noir</item>-->
-
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">#c5c5c5</item>
-        <item name="colorControlActivated">@color/pink</item>
-        <item name="colorControlHighlight">@color/pink</item>
+        <item name="colorControlActivated">@color/btnsHighlights</item>
+        <item name="colorControlHighlight">@color/btnsHighlights</item>
+
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:editTextStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="RobotoTextViewStyle" parent="android:Widget.TextView">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
+        <item name="android:fontFamily">sans-serif-light</item>
     </style>
 
 </resources>

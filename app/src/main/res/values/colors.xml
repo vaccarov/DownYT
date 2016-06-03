@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--<color name="noir">#000000</color>
-    <color name="blanc">#ffffff</color>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#000000</color>-->
+    <color name="colorPrimary">@color/cyan</color>
+    <color name="colorPrimaryDark">@color/blueGreen</color>
+    <color name="textColorPrimary">@color/white</color>
+    <color name="windowBackground">@color/white</color>
+    <color name="navigationBarColor">@color/black</color>
+    <color name="colorAccent">#c8e8ff</color>
+    <color name="btnsHighlights">@color/amber500</color>
+    <color name="songColor">@color/darkGrey</color>
+    <color name="songSelected">@color/lightGrey</color>
+    <color name="songUnselected">@color/grey300</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="colorPrimary">#12CED3</color>
-    <color name="colorPrimaryDark">#10A6A5</color>
-    <color name="textColorPrimary">#FFFFFF</color>
-    <color name="windowBackground">#FFFFFF</color>
-    <color name="navigationBarColor">#000000</color>
-    <color name="colorAccent">#c8e8ff</color>
-    <color name="pink">#FF4081</color>
     <color name="red">#FF0000</color>
+    <color name="amber500">#FFC107</color>
+    <color name="darkGrey">#424242</color>
+    <color name="lightGrey">#EEEEF0</color>
+    <color name="grey300">#E0E0E0</color>
+    <color name="cyan">#12CED3</color>
+    <color name="blueGreen">#10A6A5</color>
 
+    <color name="bluePurple">#3949AB</color>
+    <color name="darkRed">#F51057</color>
+    <color name="lighPink">#FDCCDD</color>
 </resources>

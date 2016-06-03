@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,16 +10,9 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".fragments.LyricsFragment"
     android:orientation="vertical"
-    android:id="@+id/errorMsg">
+    android:id="@+id/errorMsg"
+    android:weightSum="1">
 
-    <Button
-        android:layout_width="115dp"
-        android:layout_height="wrap_content"
-        android:text="LOAD LYRICS"
-        android:id="@+id/loadLyrics"
-        android:layout_gravity="center_horizontal"
-        android:background="@color/pink"
-        android:textColor="@color/white" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,5 +38,240 @@
             android:maxLines = "200"
             android:scrollbars = "vertical"/>
     </HorizontalScrollView>
+
+
+
+</LinearLayout>-->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
+    android:background="@color/lightGrey"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/formLyrics"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:layout_gravity="top">
+
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="30dp"
+            android:background="#fff"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true">
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:paddingTop="30dp">
+
+                <LinearLayout
+                    android:id="@+id/linear1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_alignBottom="@+id/frame"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_weight="1" >
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_alignBottom="@+id/frame"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom">
+
+                        <TextView
+                            android:id="@+id/currentSongTitleTxtView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:textSize="15sp"
+                            android:layout_gravity="center_horizontal|top"
+                            android:layout_margin="10dp"
+                            android:gravity="center_vertical|center_horizontal"
+                            android:paddingTop="20dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_alignBottom="@+id/frame"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical">
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/form_song_artist"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:drawableLeft="@drawable/ic_person_black_24dp"
+                                android:drawablePadding="10dp"
+                                android:singleLine="true"
+                                android:hint="Song artist"
+                                android:textSize="15sp"
+                                android:inputType="text"
+                                android:elegantTextHeight="true" />
+                        </android.support.design.widget.TextInputLayout>
+
+                        <android.support.design.widget.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <android.support.design.widget.TextInputEditText
+                                android:id="@+id/form_song_title"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginTop="16dp"
+                                android:singleLine="true"
+                                android:drawableLeft="@drawable/ic_audiotrack_black_24dp"
+                                android:drawablePadding="10dp"
+                                android:hint="Song title"
+                                android:textSize="15sp"
+                                android:inputType="text" />
+                        </android.support.design.widget.TextInputLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/linear2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="false"
+                    android:layout_alignTop="@id/frame"
+                    android:layout_weight="1" >
+
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:paddingTop="30dp"
+                        android:layout_alignBottom="@+id/frame"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom" >
+
+                        <Button
+                            android:id="@+id/loadLyricsCurrentSongBtn"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="22dp"
+                            android:background="@color/btnsHighlights"
+                            android:text="LOADS LYRICS"
+                            android:textAllCaps="true"
+                            android:textColor="#fff"
+                            android:textSize="18sp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:paddingTop="30dp"
+                        android:layout_alignBottom="@+id/frame"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom" >
+
+                        <Button
+                            android:id="@+id/lyricsFormBtn"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="22dp"
+                            android:background="@color/btnsHighlights"
+                            android:text="SEARCH LYRICS"
+                            android:textAllCaps="false"
+                            android:textColor="#fff"
+                            android:textSize="18sp"
+                            android:singleLine="false" />
+                    </LinearLayout>
+                </LinearLayout>
+                <FrameLayout
+                    android:id="@+id/frame"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentStart="false">
+
+                </FrameLayout>
+
+
+            </RelativeLayout>
+
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/my_tubes_logo"
+            android:elevation="4dp" />
+
+    </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/lyricsTitle"
+            android:layout_gravity="center_horizontal" />
+
+        <HorizontalScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:id="@+id/lyricsText"
+                android:gravity="center"
+                android:scrollIndicators="right"
+                android:maxLines = "200"
+                android:scrollbars = "vertical"/>
+        </HorizontalScrollView>
 
 </LinearLayout>

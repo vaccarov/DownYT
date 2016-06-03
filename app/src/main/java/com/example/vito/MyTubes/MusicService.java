@@ -44,6 +44,7 @@ public class MusicService extends Service implements
     private Random rand;
 
     public void onCreate(){
+        Log.i("ici","Music service create");
         //create the service
         super.onCreate();
         //initialize position

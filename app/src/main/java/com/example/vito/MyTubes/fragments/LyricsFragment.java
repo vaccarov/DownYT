@@ -1,9 +1,8 @@
 package com.example.vito.MyTubes.fragments;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -12,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.vito.MyTubes.MainActivity;
@@ -30,16 +30,16 @@ public class LyricsFragment extends Fragment{
 
     MainActivity ma;
     View view;
-    Button loadLyricsBtn;
-    public EditText edt;
-    TextView lyricsErrorMsg;
     String musixmatch_apikey = "5bfe574b1f36bebba4a51420fa3833dc";
-    EditText dialogSong_artist;
-    EditText dialogSong_title;
+    EditText formSong_artist;
+    EditText formSong_title;
     TextView lyricsTitle;
     TextView lyricsText;
     String currentSongTitle ="";
-    String currentLyricsTrack = "";
+    Button lyricsFormBtn;
+    RelativeLayout formLyrics;
+    TextView currentSongTitleTxtView;
+    Button loadLyricsCurrentSongBtn;
 
     public LyricsFragment() {
         // Required empty public constructor
@@ -54,43 +54,60 @@ public class LyricsFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(ma.CAT,"lrics cree");
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_lyrics, container, false);
-        loadLyricsBtn = (Button) view.findViewById(R.id.loadLyrics);
-        lyricsErrorMsg = (TextView) view.findViewById(R.id.lyricsErrorMsg);
+
         lyricsTitle = (TextView)  view.findViewById(R.id.lyricsTitle);
         lyricsText = (TextView)  view.findViewById(R.id.lyricsText);
         lyricsText.setMovementMethod(new ScrollingMovementMethod());
+        lyricsFormBtn = (Button) view.findViewById(R.id.lyricsFormBtn);
+        formSong_artist = (TextInputEditText) view.findViewById(R.id.form_song_artist);
+        formSong_title = (TextInputEditText) view.findViewById(R.id.form_song_title);
+        formLyrics = (RelativeLayout) view.findViewById(R.id.formLyrics);
+        currentSongTitleTxtView = (TextView) view.findViewById(R.id.currentSongTitleTxtView);
+        loadLyricsCurrentSongBtn = (Button) view.findViewById(R.id.loadLyricsCurrentSongBtn);
 
+        if(ma.musicSrv.songTitle.length() > 0){
+            Log.i(ma.CAT, "ma.musicSrv.songTitle;: "+ma.musicSrv.songTitle);
+            currentSongTitleTxtView.setText("Load lyrics for the current song playing \""+ma.musicSrv.songTitle+"\"");
+            currentSongTitle = ma.musicSrv.songTitle;
+            Log.i(ma.CAT,currentSongTitle);
+            loadLyricsCurrentSongBtn.setAlpha(1);
+            loadLyricsCurrentSongBtn.setEnabled(true);
+        }
+        else{
+            currentSongTitleTxtView.setText("No song playing");
+            loadLyricsCurrentSongBtn.setEnabled(false);
+            loadLyricsCurrentSongBtn.setAlpha(.5f);
+        }
 
-        loadLyricsBtn.setOnClickListener(new View.OnClickListener() {
+        loadLyricsCurrentSongBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.i(ma.CAT,"here");
-                if(ma.musicSrv.songTitle.length() == 0){
-                    lyricsErrorMsg.setText("Please, fill the field.");
+                Log.i(ma.CAT,"current btn clicked: "+currentSongTitle);
+                try {
+                    int i = currentSongTitle.indexOf('-');
+                    loadLyrics(currentSongTitle.substring(0, i), currentSongTitle.substring(i));
+                }
+                catch (Exception e){
+                    ma.alert("An error has occured");
+                }
+            }
+        });
+
+        lyricsFormBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.i(ma.CAT,"form btn clicked");
+
+                String artist = formSong_artist.getText().toString();
+                String title = formSong_title.getText().toString();
+                Log.i(ma.CAT,"artist: "+artist+" titlte: "+title);
+
+                if(artist.equals("") || title.equals("")){
+                    ma.alert("Please fill all the fields.");
                 }
                 else{
-                    currentSongTitle = ma.musicSrv.songTitle;
-                    int i = currentSongTitle.indexOf(' ');
-                    String artist = currentSongTitle.substring(0, i); //should be the artist
-                    String title = currentSongTitle.substring(i);
-                    String encodedUrlArtist = null;
-                    String encodedUrlTitle = null;
-
-                    try {
-                        encodedUrlArtist = URLEncoder.encode(artist, "UTF-8");
-                        encodedUrlTitle = URLEncoder.encode(title, "UTF-8");
-                    } catch (UnsupportedEncodingException ignored) {
-                        // Can be safely ignored because UTF-8 is always supported
-                    }
-
-                    currentLyricsTrack = currentSongTitle;
-
-                    Object[] arg = new String[]{"&q_artist="+encodedUrlArtist+"&q_track="+encodedUrlTitle};
-                    Log.i(ma.CAT,"arg: "+arg);
-
-                    AsyncTask at = new JSONAsyncTask(); //instanciation
-                    at.execute(arg); //declenche la requete
+                    loadLyrics(artist, title);
                 }
             }
         });
@@ -132,59 +149,19 @@ public class LyricsFragment extends Fragment{
             Log.i(ma.CAT, "onPostExecute");
 
             if(response == null) {
-                lyricsErrorMsg.setText("An error has occured");
+                ma.alert("An error has occured. Please try again.");
             }
             else {
                 try {
                     if(response.getJSONObject("message").getJSONObject("header").getInt("status_code") == 200){
-                        String lyrics = response.getJSONObject("message").getJSONObject("body").getJSONObject("lyrics").getString("lyrics_body");
-                        Log.i(ma.CAT, "lyrics found: "+lyrics);
-                        loadLyricsBtn.setVisibility(View.GONE);
-                        lyricsErrorMsg.setVisibility(View.GONE);
-                        lyricsTitle.setText(currentLyricsTrack);
-                        lyricsText.setText(lyrics);
+                        ma.currentLyrics = response.getJSONObject("message").getJSONObject("body").getJSONObject("lyrics").getString("lyrics_body");
+                        Log.i(ma.CAT, "lyrics found: "+ ma.currentLyrics);
+                        formLyrics.setVisibility(View.GONE);
+                        lyricsTitle.setText(ma.currentLyricsTrack, TextView.BufferType.EDITABLE);
+                        lyricsText.setText(ma.currentLyrics, TextView.BufferType.EDITABLE);
                     }
-                    else{
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        // Get the layout inflater
-                        final LayoutInflater inflater = getActivity().getLayoutInflater();
-
-                        // Inflate and set the layout for the dialog
-                        // Pass null as the parent view because its going in the dialog layout
-                        final View inflator = inflater.inflate(R.layout.dialog_lyrics, null);
-                        builder.setView(inflator)
-                        // Add action buttons
-                        .setPositiveButton(R.string.lyricsDialogLoad, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialogSong_artist = (EditText) inflator.findViewById(R.id.dialog_song_artist);
-                                dialogSong_title = (EditText) inflator.findViewById(R.id.dialog_song_title);
-
-                                String encodedUrlArtist = null;
-                                String encodedUrlTitle = null;
-
-                                try {
-                                    encodedUrlArtist = URLEncoder.encode(dialogSong_artist.getText().toString(), "UTF-8");
-                                    encodedUrlTitle = URLEncoder.encode(dialogSong_title.getText().toString(), "UTF-8");
-                                } catch (UnsupportedEncodingException ignored) {
-                                    // Can be safely ignored because UTF-8 is always supported
-                                }
-
-                                currentLyricsTrack = dialogSong_artist.getText().toString() + " " +dialogSong_title.getText().toString();
-                                Object[] arg = new String[]{"&q_artist="+encodedUrlArtist+"&q_track="+encodedUrlTitle};
-
-                                Log.i(ma.CAT, "Arg after dialog: "+arg);
-                                AsyncTask at = new JSONAsyncTask(); //instanciation
-                                at.execute(arg); //declenche la requete
-                            }
-                        })
-                        .setNegativeButton(R.string.lyricsDialogCancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
+                    else if(response.getJSONObject("message").getJSONObject("header").getInt("status_code") == 404){
+                        ma.alert("No lyrics found.");
                     }
 
                 } catch (JSONException e) {
@@ -192,6 +169,36 @@ public class LyricsFragment extends Fragment{
                 }
             }
         }
+
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        super.setMenuVisibility(visible);
+        if (visible) {
+            Log.i(ma.CAT, "fragment lyrics visible");
+        }
+    }
+
+
+    public void loadLyrics(String artist, String title){
+        ma.currentLyricsTrack = artist + title;
+
+        String encodedUrlArtist = null;
+        String encodedUrlTitle = null;
+
+        try {
+            encodedUrlArtist = URLEncoder.encode(artist, "UTF-8");
+            encodedUrlTitle = URLEncoder.encode(title, "UTF-8");
+        } catch (UnsupportedEncodingException ignored) {
+            // Can be safely ignored because UTF-8 is always supported
+        }
+
+        Object[] arg = new String[]{"&q_artist="+encodedUrlArtist+"&q_track="+encodedUrlTitle};
+        Log.i(ma.CAT,"arg: "+arg);
+
+        AsyncTask at = new JSONAsyncTask();
+        at.execute(arg);
     }
 
 }

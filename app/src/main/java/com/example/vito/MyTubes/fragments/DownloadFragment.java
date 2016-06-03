@@ -2,6 +2,8 @@ package com.example.vito.MyTubes.fragments;
 
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -38,6 +41,8 @@ public class DownloadFragment extends Fragment{
     private long enqueue;
     ProgressBar dlProgressBar;
     TextView errorMsg;
+    Button pasteBtn;
+    String title_download ="";
 
     public EditText edt;
 
@@ -49,6 +54,7 @@ public class DownloadFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ma = ((MainActivity) getActivity());
+        dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
     }
 
     @Override
@@ -60,6 +66,7 @@ public class DownloadFragment extends Fragment{
         dlLink = (EditText) view.findViewById(R.id.download_link);
         dlProgressBar = (ProgressBar) view.findViewById(R.id.dlProgressBar);
         errorMsg = (TextView) view.findViewById(R.id.errorMsg);
+        pasteBtn = (Button)  view.findViewById(R.id.pasteBtn);
 
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -72,35 +79,27 @@ public class DownloadFragment extends Fragment{
                 errorMsg.setText("Please, fill the field.");
             }
             else{
-                Object[] arg = new String[]{link};
-
+                String idLink = link.substring(link.length() - 11);
+                String correctLink = "https://www.youtube.com/watch?v=" + idLink;
                 AsyncTask at = new JSONAsyncTask(); //instanciation
-                at.execute(arg); //declenche la requete
+                at.execute(new String[]{correctLink}); //declenche la requete
             }
             }
         });
 
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    DownloadManager.Query query = new DownloadManager.Query();
-                    query.setFilterById(enqueue);
-                    Cursor c = dm.query(query);
-                    if (c.moveToFirst()) {
-                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                            Log.i(ma.CAT, "success");
-                            dlProgressBar.setVisibility(View.GONE);
-                            dlLink.setText("");
-                        }
-                    }
+        pasteBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                try{
+                    ClipData.Item item = clipboard.getPrimaryClip().getItemAt(0);
+                    dlLink.setText(String.valueOf(item.getText()));
+                }
+                catch(Exception e){
+                    ma.alert("Impossible de coller, rien n'est copié !");
                 }
             }
-        };
+        });
 
-        getActivity().registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
         return view;
     }
@@ -115,11 +114,9 @@ public class DownloadFragment extends Fragment{
 
         protected JSONObject doInBackground(String... qs) {
             // Do some validation here
-            String API_URL = "http://www.youtubeinmp3.com/fetch/?";
-            String API_FORMAT ="format=JSON";
-            String API_VIDEO = "video=";
+            String API_URL = "http://www.youtubeinmp3.com/fetch/?format=JSON&video=";
             String res = "";
-            res = ma.requete(API_URL + API_FORMAT + "&" + API_VIDEO + qs[0]);
+            res = ma.requete(API_URL + qs[0]);
 
             try{
                 if(res.length() >0){
@@ -146,14 +143,14 @@ public class DownloadFragment extends Fragment{
                     Log.i("INFO", response.getString("link"));
                     String title = response.getString("title");
                     String link = response.getString("link");
+                    title_download = title;
                     result = title + " " + link;
                     Log.i(ma.CAT, result);
 
-                    dm = (DownloadManager) getActivity().getSystemService(getActivity().DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
-
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);
                     enqueue = dm.enqueue(request);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -161,5 +158,31 @@ public class DownloadFragment extends Fragment{
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        BroadcastReceiver receiver2 = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(enqueue);
+                    Cursor c = dm.query(query);
+                    if (c.moveToFirst()) {
+                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                            Log.i(ma.CAT, "success");
+                            dlProgressBar.setVisibility(View.GONE);
+                            dlLink.setText("");
+                            ma.alert(title_download + " Downloaded");
+                        }
+                    }
+                }
+            }
+        };
 
+        getActivity().registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+    }
 }

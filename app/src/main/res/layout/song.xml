@@ -1,27 +1,63 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="5dp"
     android:onClick="songPicked"
+    android:id="@+id/songRL"
     android:weightSum="1">
 
-    <TextView
-        android:id="@+id/song_title"
-        android:layout_width="fill_parent"
-        android:layout_height="48dp"
-        android:textColor="@color/pink"
-        android:textSize="16sp"
-        android:paddingTop="8dp"
-        android:paddingLeft="72dp"
-        android:paddingRight="16dp"/>
 
-    <!--<TextView
-        android:id="@+id/song_artist"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#1eb8cc"
-        android:textSize="18sp" />-->
+        <ImageView
+            android:id="@+id/noteIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_audiotrack_black_24dp"
+            >
+        </ImageView>
 
-</LinearLayout>
+        <ImageView
+            android:visibility="invisible"
+            android:id="@+id/playingIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_equalizer_black_24dp"
+            >
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toRightOf="@+id/noteIcon"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/song_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/songColor"
+                android:textSize="16sp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"/>
+
+            <TextView
+                android:id="@+id/song_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#1eb8cc"
+                android:textSize="18sp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+        </LinearLayout>
+
+</RelativeLayout>

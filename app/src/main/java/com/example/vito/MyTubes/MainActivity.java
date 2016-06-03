@@ -8,12 +8,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -28,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.Toast;
 
@@ -50,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 // Toast.makeText(getApplicationContext(),"texte",Toast.LENGTH_SHORT).show();
 // Log.i(TAG,"texte");
@@ -69,12 +75,24 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     public boolean musicBound=false;
     public Intent playIntent;
     private boolean paused=false, playbackPaused=false;
+    public String currentLyricsTrack = "";
+    public String currentLyrics = "";
+    String title_download="";
+    View precView = null;
+
+    private int[] tabIcons = {
+            R.drawable.ic_library_music_white_24dp,
+            R.drawable.ic_cloud_download_black_24dp,
+            R.drawable.ic_queue_music_white_24dp
+    };
+    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         allowPermission();
+        setupTabIcons();
     }
 
     //set the controller up
@@ -96,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         //set and show
         controller.setMediaPlayer(this);
         controller.setAnchorView(findViewById(R.id.viewpager));
-        controller.setPadding(30, 0, 30, 150);
+        //controller.setPadding(30, 0, 30, 180);
         controller.setEnabled(true);
     }
 
@@ -118,8 +136,31 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
 //        controller.show(0);
     }
 
+
+        //prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+        tabLayout.getTabAt(2).setIcon(tabIcons[2]);
+    }
+
     public void songPicked(View view){
+        Log.i(CAT, "songpicked"+view.getTag().toString());
         controller.show();
+
+        if(precView != null && view != precView){
+            ImageView iv = (ImageView) precView.findViewById(R.id.playingIcon);
+            iv.setVisibility(View.GONE);
+            precView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.songSelected));
+        }
+
+        view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.songUnselected));
+        ImageView iv = (ImageView) view.findViewById(R.id.playingIcon);
+        iv.setVisibility(View.VISIBLE);
+
+        precView = view;
+
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
         if(playbackPaused){
@@ -149,7 +190,25 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
             Log.i("ok", "action main"); // lancement normal
         }
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String themeColor = sharedPref.getString("listPref", "");
+        CharSequence[] keys = getApplicationContext().getResources().getTextArray(R.array.listArray);
+        CharSequence[] values = getApplicationContext().getResources().getTextArray(R.array.listValues);
+
+        // loop and find index...
+        int len = values.length;
+        for (int i = 0; i < len; i++) {
+            if (values[i].equals(themeColor)) {
+                Log.i(CAT,"Preference: "+ (String) keys[i]);
+            }
+        }
+        Log.i(CAT, "themeColor: "+themeColor);
+        //Set<String> someStringSet = sharedPref.getStringSet("listPref");
+
+
     }
+
     BroadcastReceiver receiver2 = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -161,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
                 if (c.moveToFirst()) {
                     int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
                     if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                        Log.i(CAT, "successssss");
+                        alert(title_download + " Downloaded");
                     }
                 }
             }
@@ -231,12 +290,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         musicSrv.go();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        // Your logic here
-        Log.i(CAT,"touchhhhh");
-        return super.onTouchEvent(event);
-    }
     public ArrayList<Song> getSongs() {
         return songList;
     }
@@ -276,11 +329,14 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
                     Log.i("INFO", response.getString("link"));
                     String title = response.getString("title");
                     String link = response.getString("link");
+                    title_download = title;
                     result = title + " " + link;
                     Log.i(CAT, "result:"+result);
 
                     dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);
+
                     enqueue = dm.enqueue(request);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -425,6 +481,10 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
                 musicSrv=null;
                 System.exit(0);
                 break;
+            case  R.id.action_choose_theme:
+                Intent versPref = new Intent(this, PrefActivity.class);
+                startActivity(versPref);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -456,4 +516,10 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             }
         }
     }
+
+    public void alert(String s){
+        Toast.makeText(this.getApplicationContext(),s,Toast.LENGTH_SHORT).show();
+    }
+
+
 }
