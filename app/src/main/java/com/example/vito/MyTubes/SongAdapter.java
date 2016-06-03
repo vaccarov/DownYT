@@ -5,10 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 
 public class SongAdapter extends BaseAdapter {
 
@@ -19,6 +17,7 @@ public class SongAdapter extends BaseAdapter {
         ma = mac;
         songInf=LayoutInflater.from(mac);
     }
+
     @Override
     public int getCount() {
         return ma.getSongs().size();

@@ -16,8 +16,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -30,7 +28,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
@@ -55,10 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
-// Toast.makeText(getApplicationContext(),"texte",Toast.LENGTH_SHORT).show();
-// Log.i(TAG,"texte");
 public class MainActivity extends AppCompatActivity implements MediaController.MediaPlayerControl{
 
     private static final int PERMISSIONS = 13; // pour identifier la permission
@@ -74,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     public MusicService musicSrv;
     public boolean musicBound=false;
     public Intent playIntent;
-    private boolean paused=false, playbackPaused=false;
+    private boolean playbackPaused=false;
     public String currentLyricsTrack = "";
     public String currentLyrics = "";
     String title_download="";
@@ -85,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             R.drawable.ic_cloud_download_black_24dp,
             R.drawable.ic_queue_music_white_24dp
     };
-    SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,9 +88,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         setupTabIcons();
     }
 
-    //set the controller up
     private void setController(){
-        Log.i("okokokokok","setcontro");
         controller = new MusicController(this);
         //set previous and next button listeners
         controller.setPrevNextListeners(new View.OnClickListener() {
@@ -114,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         //set and show
         controller.setMediaPlayer(this);
         controller.setAnchorView(findViewById(R.id.viewpager));
-        //controller.setPadding(30, 0, 30, 180);
+//        controller.setPadding(30, 0, 30, 180);
         controller.setEnabled(true);
     }
 
@@ -124,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             setController();
             playbackPaused=false;
         }
-//        controller.show(0);
     }
 
     private void playPrev(){
@@ -133,11 +123,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             setController();
             playbackPaused=false;
         }
-//        controller.show(0);
     }
-
-
-        //prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
@@ -146,21 +132,16 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     }
 
     public void songPicked(View view){
-        Log.i(CAT, "songpicked"+view.getTag().toString());
         controller.show();
-
         if(precView != null && view != precView){
             ImageView iv = (ImageView) precView.findViewById(R.id.playingIcon);
             iv.setVisibility(View.GONE);
             precView.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.songSelected));
         }
-
         view.setBackgroundColor(ContextCompat.getColor(getApplicationContext(),R.color.songUnselected));
         ImageView iv = (ImageView) view.findViewById(R.id.playingIcon);
         iv.setVisibility(View.VISIBLE);
-
         precView = view;
-
         musicSrv.setSong(Integer.parseInt(view.getTag().toString()));
         musicSrv.playSong();
         if(playbackPaused){
@@ -176,26 +157,22 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             startService(playIntent);
             setController();
         }
-        Log.i("onstart", "start");
         Intent in = getIntent();
         String receivedAction = in.getAction();
         if (receivedAction.equals(Intent.ACTION_SEND)) {
-            Log.i("ok", "action send"); // lancement depuis intent
             String shortLink = getIntent().getExtras().getString(Intent.EXTRA_TEXT);
             String idLink = shortLink.substring(shortLink.length() - 11);
             String correctLink = "https://www.youtube.com/watch?v=" + idLink;
-            Log.i("ok", correctLink);
             new tacheDeFond().execute(new String[]{correctLink});
-            this.registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+            this.registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
         } else if (receivedAction.equals(Intent.ACTION_MAIN)) {
-            Log.i("ok", "action main"); // lancement normal
+            // lancement normal
         }
 
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         String themeColor = sharedPref.getString("listPref", "");
         CharSequence[] keys = getApplicationContext().getResources().getTextArray(R.array.listArray);
         CharSequence[] values = getApplicationContext().getResources().getTextArray(R.array.listValues);
-
         // loop and find index...
         int len = values.length;
         for (int i = 0; i < len; i++) {
@@ -204,12 +181,9 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             }
         }
         Log.i(CAT, "themeColor: "+themeColor);
-        //Set<String> someStringSet = sharedPref.getStringSet("listPref");
-
-
     }
 
-    BroadcastReceiver receiver2 = new BroadcastReceiver() {
+    BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -297,12 +271,9 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     private class tacheDeFond extends AsyncTask<String, Void, JSONObject>{
         @Override
         protected JSONObject doInBackground(String... qs) {
-            Log.i(CAT+"qs",qs[0]);
             String API_URL = "http://www.youtubeinmp3.com/fetch/?format=JSON&video=";
             String url = API_URL + qs[0];
-            Log.i(CAT+" URL finale ",url);
             String res = requete(url);
-            Log.i(CAT, "resultat :"+res);
             try{
                 if(res.length() >0){
                     JSONObject oRes = new JSONObject(res);
@@ -317,26 +288,18 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         }
         @Override
         protected void onPostExecute(JSONObject response) {
-            Log.i(CAT, "onPostExecute");
             String result = "";
-
             if(response == null) {
-                //Error
                 Log.i(CAT, "ERROR onPostExecute");
             }
             else {
                 try {
-                    Log.i("INFO", response.getString("link"));
                     String title = response.getString("title");
                     String link = response.getString("link");
                     title_download = title;
-                    result = title + " " + link;
-                    Log.i(CAT, "result:"+result);
-
                     dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);
-
                     enqueue = dm.enqueue(request);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -345,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         }
     }
     private void setUpToolbars() {
-        Log.i(CAT,"setuptoolbnar");
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -353,7 +315,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -388,7 +349,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         }
     }
     public void setSongs() {
-        Log.i(CAT,"setsongs");
         songList = new ArrayList<Song>();
         Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         Cursor musicCursor = getContentResolver().query(musicUri, null, null, null, null);
@@ -434,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             String urlData = qs;
             try {
                 URL url = new URL(urlData);
-                Log.i(CAT, "url utilisée : " + url.toString());
                 HttpURLConnection urlConnection = null;
                 urlConnection = (HttpURLConnection) url.openConnection();
                 InputStream in = null;
@@ -454,9 +413,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
-            //get service
             musicSrv = binder.getService();
-            //pass list
             musicSrv.setList(songList);
             musicBound = true;
         }
@@ -488,18 +445,16 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
         }
         return super.onOptionsItemSelected(item);
     }
-    // demande de droits pour lire la carte sd
+
     private void allowPermission() {
         int read = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE);
         int write = ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE);
         if (read != PackageManager.PERMISSION_GRANTED && write != PackageManager.PERMISSION_GRANTED) {
-            Log.i("test", "request both perm");
             ActivityCompat.requestPermissions(this, new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             PERMISSIONS);
         } else {
-            Log.i("","got both permissions already");
             setSongs();
             setUpToolbars();
         }
@@ -508,7 +463,6 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         if (requestCode == PERMISSIONS) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.i("test", "read and write accepte");
                 setSongs();
                 setUpToolbars();
             } else {
@@ -520,6 +474,4 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     public void alert(String s){
         Toast.makeText(this.getApplicationContext(),s,Toast.LENGTH_SHORT).show();
     }
-
-
 }

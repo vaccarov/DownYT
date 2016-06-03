@@ -16,13 +16,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
 
-/*
- * This is demo code to accompany the Mobiletuts+ series:
- * Android SDK: Creating a Music Player
- *
- * Sue Smith - February 2014
- */
-
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener {
@@ -44,7 +37,6 @@ public class MusicService extends Service implements
     private Random rand;
 
     public void onCreate(){
-        Log.i("ici","Music service create");
         //create the service
         super.onCreate();
         //initialize position
@@ -111,8 +103,7 @@ public class MusicService extends Service implements
         //set the data source
         try{
             player.setDataSource(getApplicationContext(), trackUri);
-        }
-        catch(Exception e){
+        } catch(Exception e){
             Log.e("MUSIC SERVICE", "Error setting data source", e);
         }
         player.prepareAsync();
@@ -134,7 +125,6 @@ public class MusicService extends Service implements
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.v("MUSIC PLAYER", "Playback Error");
         mp.reset();
         return false;
     }
@@ -148,9 +138,7 @@ public class MusicService extends Service implements
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendInt = PendingIntent.getActivity(this, 0,
                 notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         Notification.Builder builder = new Notification.Builder(this);
-
         builder.setContentIntent(pendInt)
                 .setSmallIcon(R.drawable.play)
                 .setTicker(songTitle)
@@ -219,5 +207,4 @@ public class MusicService extends Service implements
         if(shuffle) shuffle=false;
         else shuffle=true;
     }
-
 }

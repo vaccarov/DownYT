@@ -4,11 +4,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-import android.util.Log;
 
 /**
  * Created by melissabeuze on 04/03/16.
  */
+
 public class PrefActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
 
@@ -40,7 +40,6 @@ public class PrefActivity extends PreferenceActivity implements SharedPreference
     @Override
     protected void onPause() {
         super.onPause();
-
         // Unregister the listener whenever a key changes
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
@@ -49,8 +48,6 @@ public class PrefActivity extends PreferenceActivity implements SharedPreference
         // Set new summary, when a preference value changes
         if (key.equals(KEY_LIST_PREFERENCE)) {
             mListPreference.setSummary("Current value is " + mListPreference.getEntry().toString());
-
-            Log.i("ici2",mListPreference.getValue().toString());
             switch(mListPreference.getValue()){
                 case "1": break;
                 case "2": break;

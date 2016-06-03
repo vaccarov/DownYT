@@ -44,8 +44,6 @@ public class DownloadFragment extends Fragment{
     Button pasteBtn;
     String title_download ="";
 
-    public EditText edt;
-
     public DownloadFragment() {
         // Required empty public constructor
     }
@@ -67,14 +65,11 @@ public class DownloadFragment extends Fragment{
         dlProgressBar = (ProgressBar) view.findViewById(R.id.dlProgressBar);
         errorMsg = (TextView) view.findViewById(R.id.errorMsg);
         pasteBtn = (Button)  view.findViewById(R.id.pasteBtn);
-
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             errorMsg.setText("");
             dlProgressBar.setVisibility(View.VISIBLE);
             String link = dlLink.getText().toString();
-            Log.i(ma.CAT, link);
-
             if(link.length() == 0){
                 errorMsg.setText("Please, fill the field.");
             }
@@ -86,7 +81,6 @@ public class DownloadFragment extends Fragment{
             }
             }
         });
-
         pasteBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -99,14 +93,10 @@ public class DownloadFragment extends Fragment{
                 }
             }
         });
-
-
         return view;
     }
 
     class JSONAsyncTask extends AsyncTask<String, Void, JSONObject> {
-
-        private Exception exception;
 
         @Override
         protected void onPreExecute() {
@@ -117,7 +107,6 @@ public class DownloadFragment extends Fragment{
             String API_URL = "http://www.youtubeinmp3.com/fetch/?format=JSON&video=";
             String res = "";
             res = ma.requete(API_URL + qs[0]);
-
             try{
                 if(res.length() >0){
                     JSONObject oRes = new JSONObject(res);
@@ -132,25 +121,18 @@ public class DownloadFragment extends Fragment{
         }
 
         protected void onPostExecute(JSONObject response) {
-            Log.i(ma.CAT, "onPostExecute");
             String result = "";
-
             if(response == null) {
                 errorMsg.setText("No video was found.");
             }
             else {
                 try {
-                    Log.i("INFO", response.getString("link"));
                     String title = response.getString("title");
                     String link = response.getString("link");
                     title_download = title;
-                    result = title + " " + link;
-                    Log.i(ma.CAT, result);
-
                     DownloadManager.Request request = new DownloadManager.Request(Uri.parse(link));
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title);
                     enqueue = dm.enqueue(request);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -172,7 +154,6 @@ public class DownloadFragment extends Fragment{
                     if (c.moveToFirst()) {
                         int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
                         if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
-                            Log.i(ma.CAT, "success");
                             dlProgressBar.setVisibility(View.GONE);
                             dlLink.setText("");
                             ma.alert(title_download + " Downloaded");
@@ -181,8 +162,6 @@ public class DownloadFragment extends Fragment{
                 }
             }
         };
-
         getActivity().registerReceiver(receiver2, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-
     }
 }

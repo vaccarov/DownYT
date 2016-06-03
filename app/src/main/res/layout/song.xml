@@ -8,7 +8,6 @@
     android:id="@+id/songRL"
     android:weightSum="1">
 
-
         <ImageView
             android:id="@+id/noteIcon"
             android:layout_width="32dp"

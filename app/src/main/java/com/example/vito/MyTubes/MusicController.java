@@ -1,7 +1,6 @@
 package com.example.vito.MyTubes;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.MediaController;
 
 /**
@@ -14,7 +13,5 @@ public class MusicController extends MediaController {
         super(c);
     }
 
-    public void hide(){
-        Log.i("okokoko", "hide");
-    }
+    public void hide(){}
 }
