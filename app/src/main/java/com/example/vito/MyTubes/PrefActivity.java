@@ -48,10 +48,7 @@ public class PrefActivity extends PreferenceActivity implements SharedPreference
         // Set new summary, when a preference value changes
         if (key.equals(KEY_LIST_PREFERENCE)) {
             mListPreference.setSummary("Current value is " + mListPreference.getEntry().toString());
-            switch(mListPreference.getValue()){
-                case "1": break;
-                case "2": break;
-            }
+            PrefActivity.this.recreate();
         }
     }
 }

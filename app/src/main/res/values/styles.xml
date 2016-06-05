@@ -8,12 +8,28 @@
         <!-- Customize your theme here. -->
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/cyan</item>
+        <item name="colorPrimaryDark">@color/blueGreen</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">#c5c5c5</item>
-        <item name="colorControlActivated">@color/btnsHighlights</item>
-        <item name="colorControlHighlight">@color/btnsHighlights</item>
+        <item name="colorControlActivated">@color/amber500</item>
+        <item name="colorControlHighlight">@color/amber500</item>
+
+        <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:editTextStyle">@style/RobotoTextViewStyle</item>
+        <item name="android:buttonStyle">@style/RobotoButtonStyle</item>
+    </style>
+
+    <style name="MyMaterialTheme.BlueRed" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="colorPrimary">@color/bluePurple</item>
+        <item name="colorPrimaryDark">@color/darkRed</item>
+        <item name="colorAccent">@color/lighPink</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/darkRed</item>
+        <item name="colorControlHighlight">@color/darkRed</item>
 
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:editTextStyle">@style/RobotoTextViewStyle</item>

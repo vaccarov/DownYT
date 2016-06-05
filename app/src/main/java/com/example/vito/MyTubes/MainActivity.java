@@ -16,6 +16,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     public String currentLyrics = "";
     String title_download="";
     View precView = null;
+    private SharedPreferences.OnSharedPreferenceChangeListener listner;
 
     private int[] tabIcons = {
             R.drawable.ic_library_music_white_24dp,
@@ -83,6 +85,16 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        String themeColor = sharedPref.getString("listPref", "-1");
+        switch(themeColor){
+            case "1": alert("Theme Cyan - Yellow");
+                setTheme(R.style.MyMaterialTheme_Base);
+                break;
+            case "2": alert("Theme Blue - Red");
+                setTheme(R.style.MyMaterialTheme_BlueRed);
+                break;
+        }
         setContentView(R.layout.activity_main);
         allowPermission();
         setupTabIcons();
@@ -169,18 +181,15 @@ public class MainActivity extends AppCompatActivity implements MediaController.M
             // lancement normal
         }
 
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-        String themeColor = sharedPref.getString("listPref", "");
-        CharSequence[] keys = getApplicationContext().getResources().getTextArray(R.array.listArray);
-        CharSequence[] values = getApplicationContext().getResources().getTextArray(R.array.listValues);
-        // loop and find index...
-        int len = values.length;
-        for (int i = 0; i < len; i++) {
-            if (values[i].equals(themeColor)) {
-                Log.i(CAT,"Preference: "+ (String) keys[i]);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        listner = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPref, String key) {
+                //implementation goes here
+                MainActivity.this.recreate();
             }
-        }
-        Log.i(CAT, "themeColor: "+themeColor);
+        };
+        sharedPref.registerOnSharedPreferenceChangeListener(listner);
     }
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
